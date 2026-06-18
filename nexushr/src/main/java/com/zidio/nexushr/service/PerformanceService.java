@@ -1,0 +1,80 @@
+package com.zidio.nexushr.service;
+
+import com.zidio.nexushr.dto.PerformanceDTO;
+import com.zidio.nexushr.entity.Employee;
+import com.zidio.nexushr.entity.PerformanceReview;
+import com.zidio.nexushr.exception.ResourceNotFoundException;
+import com.zidio.nexushr.repository.EmployeeRepository;
+import com.zidio.nexushr.repository.PerformanceReviewRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class PerformanceService {
+
+    private final PerformanceReviewRepository reviewRepository;
+    private final EmployeeRepository employeeRepository;
+
+    public List<PerformanceDTO> getAllReviews() {
+        return reviewRepository.findAll().stream()
+                .map(PerformanceDTO::fromEntity)
+                .toList();
+    }
+
+    public PerformanceDTO getReviewById(Long id) {
+        PerformanceReview review = reviewRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("PerformanceReview", "id", id));
+        return PerformanceDTO.fromEntity(review);
+    }
+
+    public List<PerformanceDTO> getReviewsByEmployee(Long employeeId) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee", "id", employeeId));
+        return reviewRepository.findByEmployee(employee).stream()
+                .map(PerformanceDTO::fromEntity)
+                .toList();
+    }
+
+    public PerformanceDTO createReview(PerformanceDTO dto) {
+        Employee employee = employeeRepository.findById(dto.getEmployeeId())
+                .orElseThrow(() -> new ResourceNotFoundException("Employee", "id", dto.getEmployeeId()));
+        Employee reviewer = employeeRepository.findById(dto.getReviewerId())
+                .orElseThrow(() -> new ResourceNotFoundException("Reviewer", "id", dto.getReviewerId()));
+
+        PerformanceReview review = PerformanceReview.builder()
+                .employee(employee)
+                .reviewer(reviewer)
+                .reviewDate(dto.getReviewDate())
+                .rating(dto.getRating())
+                .feedback(dto.getFeedback())
+                .goals(dto.getGoals())
+                .build();
+
+        return PerformanceDTO.fromEntity(reviewRepository.save(review));
+    }
+
+    public PerformanceDTO updateReview(Long id, PerformanceDTO dto) {
+        PerformanceReview review = reviewRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("PerformanceReview", "id", id));
+
+        review.setReviewDate(dto.getReviewDate());
+        review.setRating(dto.getRating());
+        review.setFeedback(dto.getFeedback());
+        review.setGoals(dto.getGoals());
+        if (dto.getStatus() != null) {
+            review.setStatus(PerformanceReview.ReviewStatus.valueOf(dto.getStatus()));
+        }
+
+        return PerformanceDTO.fromEntity(reviewRepository.save(review));
+    }
+
+    public void deleteReview(Long id) {
+        if (!reviewRepository.existsById(id)) {
+            throw new ResourceNotFoundException("PerformanceReview", "id", id);
+        }
+        reviewRepository.deleteById(id);
+    }
+}

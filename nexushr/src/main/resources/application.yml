@@ -1,0 +1,41 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: nexushr
+  profiles:
+    active: dev
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: UTC
+
+app:
+  jwt:
+    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970337336763979244226452948404D635166546A576E5A7234753778214125442A47
+    expiration-ms: 86400000
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+
+logging:
+  level:
+    com.zidio.nexushr: DEBUG
+    org.springframework.security: INFO
