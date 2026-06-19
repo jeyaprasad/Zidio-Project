@@ -57,6 +57,9 @@ logging:
   level:
     com.zidio.nexushr: DEBUG
     org.springframework.security: INFO
+sentry:
+  dsn: ${SENTRY_DSN:}
+  traces-sample-rate: 1.0
 
 management:
   endpoints:
@@ -68,4 +71,3 @@ management:
       show-details: always
     prometheus:
       enabled: true
-

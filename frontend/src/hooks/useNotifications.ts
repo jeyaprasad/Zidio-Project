@@ -17,7 +17,7 @@ interface UseNotificationsProps {
 
 export const useNotifications = ({ user, onNotification }: UseNotificationsProps) => {
   const socketRef = useRef<WebSocket | null>(null);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const reconnectTimeoutRef = useRef<any | null>(null);
   const isConnectingRef = useRef(false);
 
   useEffect(() => {
@@ -32,26 +32,7 @@ export const useNotifications = ({ user, onNotification }: UseNotificationsProps
       if (isConnectingRef.current) return;
       isConnectingRef.current = true;
 
-      // Extract user ID from localStorage decoded info or parse from helper if needed
-      let userId: string | null = null;
-      try {
-        const storedUser = localStorage.getItem('nexushr_user');
-        if (storedUser) {
-          const parsed = JSON.parse(storedUser);
-          // Wait, let's see how user ID is represented. The User interface in api.ts has: token, fullName, email, role.
-          // Since the API login response returns the User object, let's look at the JWT payload or parse standard login response.
-          // In Java backend, the user ID is a Long. Let's see if the token contains the ID, or if we can extract it or use a default channel.
-          // Wait, the backend pushes messages using: messagingTemplate.convertAndSendToUser(user.getId().toString(), "/queue/notifications", savedDto)
-          // So the user destination name is user.getId().toString() or user.getEmail().
-          // Wait, let's verify how user ID or principal is determined in Spring Security.
-          // In Spring Security with JWT, the Principal name is usually the username (email).
-          // Let's check how the JWT principal is resolved or how user.getId().toString() is mapped.
-          // Wait, let's see. Spring Security's SimpMessagingTemplate resolves user destination based on the Principal's name.
-          // Let's look at where security resolves principal or if we can just subscribe to the user's destination.
-        }
-      } catch (e) {
-        console.error('Failed to parse user session info', e);
-      }
+      // User is verified, standard STOMP user registry matches subscriptions using authentication principal.
 
       // If we subscribe to /user/queue/notifications, Spring's UserRegistry matching delegates it.
       // Let's establish connection URL:

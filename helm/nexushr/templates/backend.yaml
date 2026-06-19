@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "nexushr.fullname" . }}-backend-config
+data:
+  SPRING_PROFILES_ACTIVE: "prod"
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://{{ include "nexushr.fullname" . }}-db:5432/{{ .Values.db.database }}"
+  SPRING_DATA_REDIS_HOST: "{{ include "nexushr.fullname" . }}-redis"
+  OPENAI_MODEL: {{ .Values.backend.openAiModel | quote }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "nexushr.fullname" . }}-backend-secret
+type: Opaque
+stringData:
+  OPENAI_API_KEY: {{ .Values.backend.openAiApiKey | quote }}
+  SENTRY_DSN: {{ .Values.backend.sentryDsn | quote }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nexushr.fullname" . }}-backend
+  labels:
+    app: {{ include "nexushr.name" . }}-backend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "nexushr.name" . }}-backend
+  template:
+    metadata:
+      labels:
+        app: {{ include "nexushr.name" . }}-backend
+    spec:
+      containers:
+        - name: backend
+          image: {{ .Values.backend.image | quote }}
+          imagePullPolicy: {{ .Values.backend.imagePullPolicy }}
+          ports:
+            - containerPort: {{ .Values.backend.port }}
+              name: backendport
+          envFrom:
+            - configMapRef:
+                name: {{ include "nexushr.fullname" . }}-backend-config
+          env:
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "nexushr.fullname" . }}-backend-secret
+                  key: OPENAI_API_KEY
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "nexushr.fullname" . }}-backend-secret
+                  key: SENTRY_DSN
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: {{ .Values.backend.port }}
+            initialDelaySeconds: 45
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: {{ .Values.backend.port }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nexushr.fullname" . }}-backend
+spec:
+  ports:
+    - port: {{ .Values.backend.port }}
+      targetPort: {{ .Values.backend.port }}
+  selector:
+    app: {{ include "nexushr.name" . }}-backend

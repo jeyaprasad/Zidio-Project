@@ -266,6 +266,7 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
           feedback: '',
           goals: '',
         },
+        ai: {},
       };
       setFormData(schemas[activeTab]);
     }
@@ -427,7 +428,35 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
           }`}>{v}</span>
         ),
       },
+      {
+        key: 'sentiment',
+        label: 'Sentiment (AI)',
+        render: (v) => {
+          if (!v) return <span className="text-slate-500">—</span>;
+          const norm = v.toUpperCase();
+          if (norm === 'POSITIVE') {
+            return (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400">
+                😊 Positive
+              </span>
+            );
+          } else if (norm === 'NEGATIVE') {
+            return (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-500/15 text-red-400">
+                😢 Negative
+              </span>
+            );
+          } else {
+            return (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-500/15 text-slate-400">
+                😐 Neutral
+              </span>
+            );
+          }
+        },
+      },
     ],
+    ai: [],
   };
 
   const currentCols = cols[activeTab] || [];
@@ -725,6 +754,72 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
           </button>
         ))}
       </div>
+
+      {/* AI Insights Playground for Performance Reviews */}
+      {activeTab === 'performance' && (
+        <div className="mb-8 p-6 bg-slate-900 border border-white/5 rounded-2xl text-left">
+          <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-2 flex items-center gap-2">
+            🤖 Hugging Face AI Sentiment Analyzer Playground
+          </h3>
+          <p className="text-xs text-slate-400 mb-4">
+            Test the live Hugging Face sentiment model (CardiffNLP RoBERTa) on any employee feedback text before saving.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <textarea
+                placeholder="Type sample employee feedback here..."
+                id="ai-playground-input"
+                className="w-full h-24 rounded-lg border border-white/10 bg-slate-950 px-4 py-3 text-xs text-white outline-none focus:border-indigo-500 resize-none transition-colors"
+              />
+              <button
+                type="button"
+                onClick={async () => {
+                  const inputEl = document.getElementById('ai-playground-input') as HTMLTextAreaElement;
+                  const outputEl = document.getElementById('ai-playground-output');
+                  if (!inputEl || !outputEl) return;
+                  const val = inputEl.value.trim();
+                  if (!val) {
+                    alert('Please enter some text first');
+                    return;
+                  }
+                  outputEl.innerText = 'Analyzing...';
+                  try {
+                    const res = await apiFetch<any>('/ai/sentiment', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'text/plain' },
+                      body: val
+                    });
+                    
+                    let display = '';
+                    if (typeof res === 'string') {
+                      try {
+                        const parsed = JSON.parse(res);
+                        display = JSON.stringify(parsed, null, 2);
+                      } catch {
+                        display = res;
+                      }
+                    } else {
+                      display = JSON.stringify(res, null, 2);
+                    }
+                    outputEl.innerText = display;
+                  } catch (err: any) {
+                    outputEl.innerText = 'Error: ' + err.message;
+                  }
+                }}
+                className="mt-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg transition-all cursor-pointer"
+              >
+                Run Sentiment Analysis
+              </button>
+            </div>
+            <div className="bg-slate-950/60 rounded-lg border border-white/5 p-4 overflow-auto max-h-32">
+              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Analysis Result (Raw API Response)</div>
+              <pre id="ai-playground-output" className="text-xs text-indigo-300 font-mono whitespace-pre-wrap">
+                No analysis run yet. Type feedback on the left and run analysis.
+              </pre>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Data Table */}
       <div className={`border rounded-2xl overflow-hidden shadow-xl ${isDark ? 'bg-slate-950/30 border-white/5' : 'bg-white border-slate-200'}`}>

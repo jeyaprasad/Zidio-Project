@@ -23,6 +23,7 @@ public class PerformanceDTO {
     private String feedback;
     private String goals;
     private String status;
+    private String sentiment;
 
     public static PerformanceDTO fromEntity(PerformanceReview review) {
         return PerformanceDTO.builder()
@@ -36,6 +37,7 @@ public class PerformanceDTO {
                 .feedback(review.getFeedback())
                 .goals(review.getGoals())
                 .status(review.getStatus().name())
+                .sentiment(review.getSentiment())
                 .build();
     }
 }

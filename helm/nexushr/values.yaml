@@ -1,0 +1,27 @@
+# Default values for NexusHR.
+
+replicaCount: 1
+
+db:
+  image: postgres:17-alpine
+  username: postgres
+  password: postgres
+  database: nexushr
+  storageSize: 1Gi
+
+redis:
+  image: redis:7-alpine
+
+backend:
+  image: nexushr-backend:latest
+  imagePullPolicy: IfNotPresent
+  port: 8080
+  openAiModel: gpt-4o-mini
+  openAiApiKey: "mock-key"
+  sentryDsn: ""
+
+frontend:
+  image: nexushr-frontend:latest
+  imagePullPolicy: IfNotPresent
+  port: 80
+  nodePort: 30080

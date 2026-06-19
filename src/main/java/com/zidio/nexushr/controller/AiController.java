@@ -1,6 +1,7 @@
 package com.zidio.nexushr.controller;
 
 import com.zidio.nexushr.service.AiService;
+import com.zidio.nexushr.service.HuggingFaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,6 +16,7 @@ import java.util.Map;
 public class AiController {
 
     private final AiService aiService;
+    private final HuggingFaceService huggingFaceService;
 
     @PostMapping("/attrition")
     @PreAuthorize("hasRole('ADMIN')")
@@ -22,5 +24,10 @@ public class AiController {
         String employeeData = request.getOrDefault("data", "");
         String prediction = aiService.predictAttrition(employeeData);
         return ResponseEntity.ok(Map.of("prediction", prediction));
+    }
+
+    @PostMapping("/sentiment")
+    public String analyze(@RequestBody String feedback) {
+        return huggingFaceService.analyzeSentiment(feedback);
     }
 }

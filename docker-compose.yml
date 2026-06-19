@@ -31,6 +31,8 @@ services:
       - SPRING_PROFILES_ACTIVE=prod  # Use Postgres configuration
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/nexushr
       - SPRING_DATA_REDIS_HOST=redis
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-mock-key}
+      - SENTRY_DSN=${SENTRY_DSN:-}
     depends_on:
       - db
       - redis
@@ -49,5 +51,35 @@ services:
     depends_on:
       - backend
 
+  # 5. Prometheus Metrics Scraper
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: nexushr-prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    ports:
+      - "9090:9090"
+    depends_on:
+      - backend
+
+  # 6. Grafana Visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: nexushr-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+
 volumes:
   pgdata:
+  prometheus_data:
+  grafana_data:

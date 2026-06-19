@@ -18,6 +18,7 @@ public class PerformanceService {
     private final PerformanceReviewRepository reviewRepository;
     private final EmployeeRepository employeeRepository;
     private final EmailService emailService;
+    private final HuggingFaceService huggingFaceService;
 
     public List<PerformanceDTO> getAllReviews() {
         return reviewRepository.findAll().stream()
@@ -45,6 +46,8 @@ public class PerformanceService {
         Employee reviewer = employeeRepository.findById(dto.getReviewerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Reviewer", "id", dto.getReviewerId()));
 
+        String sentiment = huggingFaceService.analyzeSentiment(dto.getFeedback());
+
         PerformanceReview review = PerformanceReview.builder()
                 .employee(employee)
                 .reviewer(reviewer)
@@ -52,6 +55,7 @@ public class PerformanceService {
                 .rating(dto.getRating())
                 .feedback(dto.getFeedback())
                 .goals(dto.getGoals())
+                .sentiment(sentiment)
                 .build();
 
         PerformanceReview savedReview = reviewRepository.save(review);
@@ -77,7 +81,14 @@ public class PerformanceService {
 
         review.setReviewDate(dto.getReviewDate());
         review.setRating(dto.getRating());
-        review.setFeedback(dto.getFeedback());
+
+        if (dto.getFeedback() != null && !dto.getFeedback().equals(review.getFeedback())) {
+            review.setFeedback(dto.getFeedback());
+            review.setSentiment(huggingFaceService.analyzeSentiment(dto.getFeedback()));
+        } else if (dto.getFeedback() != null) {
+            review.setFeedback(dto.getFeedback());
+        }
+
         review.setGoals(dto.getGoals());
         if (dto.getStatus() != null) {
             review.setStatus(PerformanceReview.ReviewStatus.valueOf(dto.getStatus()));
