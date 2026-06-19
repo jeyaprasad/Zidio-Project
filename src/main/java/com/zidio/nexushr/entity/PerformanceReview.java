@@ -39,6 +39,8 @@ public class PerformanceReview {
     @Enumerated(EnumType.STRING)
     private ReviewStatus status;
 
+    private String sentiment;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

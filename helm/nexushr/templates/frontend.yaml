@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nexushr.fullname" . }}-frontend
+  labels:
+    app: {{ include "nexushr.name" . }}-frontend
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "nexushr.name" . }}-frontend
+  template:
+    metadata:
+      labels:
+        app: {{ include "nexushr.name" . }}-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: {{ .Values.frontend.image | quote }}
+          imagePullPolicy: {{ .Values.frontend.imagePullPolicy }}
+          ports:
+            - containerPort: {{ .Values.frontend.port }}
+              name: webport
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nexushr.fullname" . }}-frontend
+spec:
+  type: NodePort
+  ports:
+    - port: {{ .Values.frontend.port }}
+      targetPort: {{ .Values.frontend.port }}
+      nodePort: {{ .Values.frontend.nodePort }}
+  selector:
+    app: {{ include "nexushr.name" . }}-frontend
