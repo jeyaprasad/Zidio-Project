@@ -8,6 +8,7 @@ import { AuthModal } from './components/AuthModal';
 export const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(getUser());
   const [showAuth, setShowAuth] = useState(false);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   const handleAuth = (loggedInUser: User) => {
     setUser(loggedInUser);
@@ -21,11 +22,17 @@ export const App: React.FC = () => {
 
   return (
     <Router>
-      <div className="min-h-screen bg-[#080D1C] text-[#E2E8F0] selection:bg-indigo-500/30 selection:text-white">
+      <div className={`min-h-screen transition-colors duration-200 selection:bg-indigo-500/30 selection:text-white ${
+        theme === 'dark' ? 'bg-[#080D1C] text-[#E2E8F0]' : 'bg-slate-50 text-slate-900'
+      }`}>
         {/* Navbar */}
-        <nav className="fixed top-0 left-0 right-0 z-40 flex h-16 items-center justify-between px-[5%] bg-slate-950/85 backdrop-blur-md border-b border-white/5">
+        <nav className={`fixed top-0 left-0 right-0 z-40 flex h-16 items-center justify-between px-[5%] backdrop-blur-md border-b transition-colors duration-200 ${
+          theme === 'dark' ? 'bg-slate-950/85 border-white/5' : 'bg-white/85 border-slate-200'
+        }`}>
           <div
-            className="flex items-center gap-2.5 font-black text-lg tracking-tight text-white cursor-pointer"
+            className={`flex items-center gap-2.5 font-black text-lg tracking-tight cursor-pointer ${
+              theme === 'dark' ? 'text-white' : 'text-slate-900'
+            }`}
             onClick={() => window.location.href = '/'}
           >
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-teal-400 flex items-center justify-center text-xs font-black text-white">
@@ -35,11 +42,29 @@ export const App: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Theme Toggle Button */}
+            <button
+              onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
+              className={`px-3 py-1.5 rounded-lg border text-xs font-semibold cursor-pointer transition-all ${
+                theme === 'dark' 
+                  ? 'border-white/10 text-slate-300 hover:bg-white/5' 
+                  : 'border-slate-200 text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
+            </button>
+
             {user ? (
               <>
-                <span className="hidden sm:inline text-xs text-slate-400 font-medium">{user.email}</span>
+                <span className={`hidden sm:inline text-xs font-medium ${
+                  theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
+                }`}>{user.email}</span>
                 <button
-                  className="px-4 py-1.5 rounded-lg border border-white/10 text-xs font-semibold text-slate-300 hover:bg-white/5 cursor-pointer transition-all"
+                  className={`px-4 py-1.5 rounded-lg border text-xs font-semibold cursor-pointer transition-all ${
+                    theme === 'dark'
+                      ? 'border-white/10 text-slate-300 hover:bg-white/5'
+                      : 'border-slate-200 text-slate-700 hover:bg-slate-100'
+                  }`}
                   onClick={handleLogout}
                 >
                   Sign Out
@@ -48,7 +73,11 @@ export const App: React.FC = () => {
             ) : (
               <>
                 <button
-                  className="px-4 py-1.5 rounded-lg border border-white/10 text-xs font-semibold text-slate-300 hover:bg-white/5 cursor-pointer transition-all"
+                  className={`px-4 py-1.5 rounded-lg border text-xs font-semibold cursor-pointer transition-all ${
+                    theme === 'dark'
+                      ? 'border-white/10 text-slate-300 hover:bg-white/5'
+                      : 'border-slate-200 text-slate-700 hover:bg-slate-100'
+                  }`}
                   onClick={() => setShowAuth(true)}
                 >
                   Sign In
@@ -69,14 +98,18 @@ export const App: React.FC = () => {
           <Route
             path="/"
             element={
-              user ? <Navigate to="/dashboard" replace /> : <LandingPage onOpenAuth={() => setShowAuth(true)} />
+              user ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <LandingPage onOpenAuth={() => setShowAuth(true)} theme={theme} />
+              )
             }
           />
           <Route
             path="/dashboard"
             element={
               user ? (
-                <Dashboard user={user} onLogout={handleLogout} />
+                <Dashboard user={user} onLogout={handleLogout} theme={theme} />
               ) : (
                 <Navigate to="/" replace />
               )

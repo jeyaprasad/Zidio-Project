@@ -47,9 +47,11 @@ public class EmployeeService {
                 .phone(dto.getPhone())
                 .department(dto.getDepartment())
                 .position(dto.getPosition())
-                .hireDate(dto.getHireDate())
+                .hireDate(dto.getHireDate() != null ? dto.getHireDate() : java.time.LocalDate.now())
                 .salary(dto.getSalary())
-                .status(Employee.EmploymentStatus.ACTIVE)
+                .status(dto.getStatus() != null
+                        ? Employee.EmploymentStatus.valueOf(dto.getStatus())
+                        : Employee.EmploymentStatus.ACTIVE)
                 .build();
 
         return EmployeeDTO.fromEntity(employeeRepository.save(employee));

@@ -3,6 +3,7 @@ import { CountUp } from '../components/CountUp';
 
 interface LandingPageProps {
   onOpenAuth: () => void;
+  theme?: 'dark' | 'light';
 }
 
 const FEATURES = [
@@ -37,13 +38,15 @@ const ARCH_LAYERS = [
 
 const TECH = ["Java 21", "Spring Boot 3", "React 19", "TypeScript", "PostgreSQL", "Redis", "Docker", "Kubernetes", "Spring AI", "Prometheus", "Grafana", "JWT Auth"];
 
-export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
+export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth, theme = 'dark' }) => {
   const techDouble = [...TECH, ...TECH];
 
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <div className="relative min-h-screen flex items-center px-[5%] py-24 overflow-hidden bg-[#080D1C]">
+      <div className={`relative min-h-screen flex items-center px-[5%] py-24 overflow-hidden transition-colors duration-200 ${
+        theme === 'dark' ? 'bg-[#080D1C]' : 'bg-slate-50'
+      }`}>
         {/* Background Grids & Glows */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(91,110,245,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(91,110,245,0.04)_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
         <div className="absolute -top-[200px] -left-[200px] w-[700px] h-[700px] rounded-full bg-radial from-indigo-500/12 to-transparent pointer-events-none" />
@@ -54,13 +57,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
             <span className="w-2.5 h-2.5 rounded-full bg-teal-400 animate-pulse" />
             AI-Enabled · Java Full Stack · Production-Grade
           </div>
-          <h1 className="text-4xl md:text-6xl font-black leading-tight tracking-tight mb-5 text-white">
+          <h1 className={`text-4xl md:text-6xl font-black leading-tight tracking-tight mb-5 ${
+            theme === 'dark' ? 'text-white' : 'text-slate-900'
+          }`}>
             Enterprise HR,<br />
             <span className="bg-gradient-to-r from-indigo-400 to-teal-400 bg-clip-text text-transparent">
               Intelligence-First
             </span>
           </h1>
-          <p className="text-slate-400 text-base md:text-lg leading-relaxed mb-9 max-w-[520px]">
+          <p className={`text-base md:text-lg leading-relaxed mb-9 max-w-[520px] ${
+            theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+          }`}>
             NexusHR streamlines the complete employee lifecycle — from onboarding to attrition prediction — on a single, scalable platform built for modern enterprises.
           </p>
 
@@ -71,7 +78,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
             >
               Get Started
             </button>
-            <button className="px-7 py-3.5 bg-transparent border border-white/10 hover:border-white/20 text-white font-semibold rounded-lg cursor-pointer transition-all flex items-center gap-2 hover:bg-white/5">
+            <button className={`px-7 py-3.5 bg-transparent border font-semibold rounded-lg cursor-pointer transition-all flex items-center gap-2 ${
+              theme === 'dark' 
+                ? 'border-white/10 text-white hover:bg-white/5 hover:border-white/20' 
+                : 'border-slate-300 text-slate-800 hover:bg-slate-100 hover:border-slate-400'
+            }`}>
               <span>▶</span> Watch Demo
             </button>
           </div>
@@ -96,20 +107,24 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
 
         {/* Hero Visual Mockup cards */}
         <div className="hidden lg:flex absolute right-[5%] top-1/2 -translate-y-1/2 w-[340px] z-10 flex-col gap-3">
-          <div className="bg-slate-900/80 border border-white/5 backdrop-blur-md rounded-xl p-4 flex items-center gap-3 animate-pulse">
+          <div className={`border backdrop-blur-md rounded-xl p-4 flex items-center gap-3 animate-pulse ${
+            theme === 'dark' ? 'bg-slate-900/80 border-white/5' : 'bg-white/80 border-slate-200 shadow-lg'
+          }`}>
             <div className="w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-lg">🤖</div>
             <div>
               <div className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Attrition Signal</div>
-              <div className="text-sm font-bold text-white">Active Flight Risk detected</div>
+              <div className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Active Flight Risk detected</div>
             </div>
             <div className="ml-auto text-[10px] font-semibold px-2 py-1 rounded-full text-red-400 bg-red-500/10">High</div>
           </div>
 
-          <div className="bg-slate-900/80 border border-white/5 backdrop-blur-md rounded-xl p-4 flex items-center gap-3">
+          <div className={`border backdrop-blur-md rounded-xl p-4 flex items-center gap-3 ${
+            theme === 'dark' ? 'bg-slate-900/80 border-white/5' : 'bg-white/80 border-slate-200 shadow-lg'
+          }`}>
             <div className="w-10 h-10 rounded-lg bg-teal-500/10 text-teal-400 flex items-center justify-center text-lg">📈</div>
             <div>
               <div className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Payroll Run</div>
-              <div className="text-sm font-bold text-white">June Payroll Generated</div>
+              <div className={`text-sm font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>June Payroll Generated</div>
             </div>
             <div className="ml-auto text-[10px] font-semibold px-2 py-1 rounded-full text-teal-400 bg-teal-500/10">Paid</div>
           </div>
@@ -129,11 +144,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
       </div>
 
       {/* Features Section */}
-      <section id="features" className="px-[5%] py-24 bg-[#080D1C]">
+      <section id="features" className={`px-[5%] py-24 transition-colors duration-200 ${
+        theme === 'dark' ? 'bg-[#080D1C]' : 'bg-slate-50 border-t border-slate-200'
+      }`}>
         <div className="text-center md:text-left mb-14">
           <div className="text-[10px] font-bold text-teal-400 tracking-[3px] uppercase mb-3">Platform Features</div>
-          <h2 className="text-3xl md:text-4xl font-extrabold mb-4 text-white">Everything HR. Nothing Redundant.</h2>
-          <p className="text-slate-400 text-sm md:text-base max-w-[520px] leading-relaxed">
+          <h2 className={`text-3xl md:text-4xl font-extrabold mb-4 ${
+            theme === 'dark' ? 'text-white' : 'text-slate-900'
+          }`}>Everything HR. Nothing Redundant.</h2>
+          <p className={`text-sm md:text-base max-w-[520px] leading-relaxed ${
+            theme === 'dark' ? 'text-slate-400' : 'text-slate-600'
+          }`}>
             Eight integrated modules replacing fragmented point solutions — all under a unified data model with real-time sync.
           </p>
         </div>
@@ -142,14 +163,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
           {FEATURES.map((f, i) => (
             <div
               key={i}
-              className="bg-slate-900 border border-white/5 rounded-2xl p-7 hover:border-indigo-500/30 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30 transition-all duration-300 relative group overflow-hidden"
+              className={`border rounded-2xl p-7 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30 transition-all duration-300 relative group overflow-hidden ${
+                theme === 'dark' 
+                  ? 'bg-slate-900 border-white/5 hover:border-indigo-500/30' 
+                  : 'bg-white border-slate-200 hover:border-indigo-500/30 shadow-sm'
+              }`}
             >
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="w-12 h-12 rounded-xl mb-5 flex items-center justify-center text-xl" style={{ background: f.color }}>
                 {f.icon}
               </div>
-              <h3 className="text-white text-base font-bold mb-2">{f.title}</h3>
-              <p className="text-slate-400 text-xs leading-relaxed">{f.desc}</p>
+              <h3 className={`text-base font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{f.title}</h3>
+              <p className={`text-xs leading-relaxed ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>{f.desc}</p>
             </div>
           ))}
         </div>

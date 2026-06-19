@@ -50,4 +50,17 @@ public class PayrollController {
         payrollService.deletePayroll(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}/pdf")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'EMPLOYEE', 'MANAGER')")
+    public ResponseEntity<byte[]> downloadPayslipPdf(@PathVariable Long id) {
+        byte[] pdfBytes = payrollService.generatePayslipPdf(id);
+        org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+        headers.setContentType(org.springframework.http.MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "payslip_" + id + ".pdf");
+        headers.setContentLength(pdfBytes.length);
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
 }

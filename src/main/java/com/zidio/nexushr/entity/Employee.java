@@ -41,6 +41,8 @@ public class Employee {
 
     private BigDecimal salary;
 
+    private Integer leaveBalance;
+
     @Enumerated(EnumType.STRING)
     private EmploymentStatus status;
 
@@ -56,6 +58,12 @@ public class Employee {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        if (leaveBalance == null) {
+            leaveBalance = 30;
+        }
+        if (hireDate == null) {
+            hireDate = java.time.LocalDate.now();
+        }
     }
 
     @PreUpdate

@@ -2,86 +2,177 @@
 
 ### AI-Enabled Enterprise HR & Workforce Intelligence Platform
 
-NexusHR is a modern, production-ready, intelligence-first Enterprise HR platform. It streamlines the complete employee lifecycle—from onboarding to attrition prediction—combining a robust Java 21 & Spring Boot 3 backend with a responsive React frontend.
+**Version 2.0 – Industry Edition** | Built by Zidio Development  
+_Production-Grade Java Full-Stack HR System with Real-Time Analytics_
+
+[![Java](https://img.shields.io/badge/Java-21-orange)](https://adoptium.net/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-green)](https://spring.io/projects/spring-boot)
+[![React](https://img.shields.io/badge/React-19-blue)](https://react.dev/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue)](https://www.docker.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue)](https://www.postgresql.org/)
 
 ---
 
-## 🚀 Key Capabilities
+## 🚀 Quick Start (Docker Desktop)
 
-| ID | Capability | Detailed Description & Business Value | Key Acceptance Criteria & Production Metrics |
+The entire application — backend, frontend, PostgreSQL, and Redis — runs with a **single command**:
+
+```bash
+# Clone and run
+git clone <repo-url>
+cd Zidio
+docker compose up --build
+```
+
+| Service     | URL                              | Description                  |
+| :---------- | :------------------------------- | :--------------------------- |
+| Frontend    | http://localhost:5173            | React + Vite Dev Server      |
+| Backend API | http://localhost:8080/api        | Spring Boot REST API         |
+| PostgreSQL  | localhost:5432                   | Database (nexushr db)        |
+| Redis       | localhost:6379                   | Session Cache                |
+
+> **Default Admin Account** — Register at the app with role `ADMIN`, or use the `/api/auth/register` endpoint.
+
+---
+
+## ✅ Feature Status
+
+| ID | Feature | Status | Details |
 | :--- | :--- | :--- | :--- |
-| **F-01** | **Employee Lifecycle Management** | End-to-end onboarding, profile management, role assignment, and offboarding workflows. | Complete workflow with approval steps and document upload capabilities. |
-| **F-02** | **Attendance & Leave Management** | Biometric simulation, leave requests submission, and manager approval workflows. | Real-time attendance dashboard and accurate leave balance calculations. |
-| **F-03** | **Payroll Processing** | Automated salary calculation, tax deductions, and automated payslip generation. | Accurate payroll runs and exportable PDF payslips. |
-| **F-04** | **Performance Management** | OKR/KPI goal setting, 360-degree feedback reviews, and manager rating system. | Interactive performance scorecards and history trend analysis. |
-| **F-05** | **AI Workforce Insights** | Predictive attrition models, skill gap analysis, and employee engagement scoring. | AI-driven recommendations with **>80% accuracy** on sample dataset. |
-| **F-06** | **Admin & Manager Dashboards** | Role-based visual metrics with comprehensive analytics and reporting. | Real-time dashboards with export options (PDF/Excel). |
-| **F-07** | **Notification & Communication** | Multi-channel delivery (Email/SMS) for approvals, reminders, and company-wide announcements. | High reliability delivery with **>95% success rate**. |
+| **F-01** | Employee Lifecycle Management | ✅ Complete | Create, update, delete employees with leave balance tracking |
+| **F-02** | Attendance & Leave Management | ✅ Complete | Mark attendance, apply/approve leave with balance validation |
+| **F-03** | Payroll Processing | ✅ Complete | Auto-calculated net salary + downloadable PDF payslips |
+| **F-04** | Performance Reviews | ✅ Complete | Full CRUD with rating, feedback, goals, OKR status tracking |
+| **F-05** | Dashboard & Analytics | ✅ Complete | Real-time stats: total, active, present today, absent today |
+| **F-06** | Auth & RBAC | ✅ Complete | JWT-based auth, role-based access (ADMIN/HR/MANAGER/EMPLOYEE) |
+| **F-07** | Dark/Light Theme | ✅ Complete | Client-side toggle persisted per session |
 
 ---
 
-## 🛠️ Production Technology Stack
+## 🏗️ Architecture
 
-### Core Platform
-| Layer | Primary Technology | Rationale / Alternatives |
+```
+nexushr/
+├── src/main/java/com/zidio/nexushr/
+│   ├── controller/      # REST controllers (Auth, Employee, Attendance, Payroll, Leave, Performance, Dashboard)
+│   ├── service/         # Business logic (leave balance validation, payroll net calc, PDF generation)
+│   ├── entity/          # JPA entities (Employee, Attendance, Payroll, Leave, PerformanceReview, User)
+│   ├── dto/             # Data Transfer Objects
+│   ├── repository/      # Spring Data JPA repositories
+│   ├── security/        # JWT filter, user details service
+│   ├── config/          # Security config, CORS
+│   └── exception/       # Global exception handler
+│
+└── frontend/
+    ├── src/
+    │   ├── pages/       # LandingPage.tsx, Dashboard.tsx
+    │   ├── components/  # AuthModal.tsx, Toast.tsx, CountUp.tsx
+    │   └── services/    # api.ts (fetch + auth session)
+    ├── vite.config.ts   # Proxy: /api → backend:8080
+    └── Dockerfile.dev   # Vite dev server container
+```
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technology | Notes |
 | :--- | :--- | :--- |
-| **Backend** | Java 21 + Spring Boot 3.x | Enterprise standard, virtual threads support, excellent ecosystem. |
-| **Frontend** | React 19 + TypeScript + Vite | Fast development, modern UI rendering, and efficient bundling. |
-| **UI Components** | shadcn/ui + Tailwind CSS v4 | Consistent, fully accessible, and sleek modern design system. |
-| **Database** | PostgreSQL 17 | ACID compliance, JSONB columns for flexible schemas. |
-| **Cache** | Redis 7+ | Fast session management, rate-limiting, and real-time cache. |
-| **Authentication**| Spring Security 6 + JWT | Stateless, secure, role-based access control (RBAC). |
-| **AI Integration**| Spring AI + OpenAI / Hugging Face | Intelligent insights, NLP analysis, and workforce recommendations. |
-
-### Infrastructure & DevOps
-| Layer | Primary Technology | Rationale / Alternatives |
-| :--- | :--- | :--- |
-| **Containerization**| Docker (Multi-stage) | Consistent, secure, and lightweight immutable container builds. |
-| **Orchestration** | Kubernetes + Helm | High availability, auto-scaling, and rolling updates in production. |
-| **CI/CD** | GitHub Actions | Automated build testing, security scanning, and deployment pipelines. |
-| **Monitoring** | Prometheus + Grafana + Sentry | Full end-to-end system observability, alert policies, and crash reporting. |
+| **Backend** | Java 21 + Spring Boot 3.5 | REST API, JWT Security, JPA |
+| **Frontend** | React 19 + TypeScript + Vite 6 | SPA with dark/light theme |
+| **Styling** | TailwindCSS v4 | Utility-first, custom design tokens |
+| **Database** | PostgreSQL 17 | ACID, auto DDL via Hibernate |
+| **Cache** | Redis 7 | Session management |
+| **Auth** | Spring Security 6 + JWT (HS512) | Stateless, RBAC |
+| **PDF** | OpenPDF (iText fork) | Payslip generation |
+| **Containers** | Docker + Docker Compose | Multi-stage builds |
 
 ---
 
-## ⚙️ Development Setup
+## 🔌 API Endpoints
 
-The repository is organized as a single project with the Spring Boot backend at the root level and a prototype frontend in `index.html`.
+All endpoints require `Authorization: Bearer <token>` except auth routes.
 
-### Prerequisites
-To run the project locally, make sure you have the following installed:
-1. **JDK 21**: Install a JDK 21 distribution (e.g. [Eclipse Temurin](https://adoptium.net/temurin/releases/?version=21)) and configure `JAVA_HOME`.
-2. **Redis**: A local Redis instance running on `localhost:6379`. You can spin one up instantly with Docker:
-   ```bash
-   docker run -d --name nexushr-redis -p 6379:6379 redis:alpine
-   ```
+### Authentication
+| Method | Endpoint | Description |
+| :----- | :------- | :---------- |
+| POST | `/api/auth/register` | Register new user |
+| POST | `/api/auth/login` | Login → returns JWT |
 
-### Running the Backend
-1. Clone the repository and navigate to the project directory.
-2. Build the project using the Maven wrapper:
-   ```powershell
-   ./mvnw clean install
-   ```
-3. Run the application:
-   ```powershell
-   ./mvnw spring-boot:run
-   ```
-   *Note: In development mode, the backend automatically uses an **in-memory H2 database** (`jdbc:h2:mem:nexushr`) with the H2 Console enabled at `/h2-console` for easy testing.*
+### Employees
+| Method | Endpoint | Role Required |
+| :----- | :------- | :------------ |
+| GET | `/api/employees` | Any authenticated |
+| GET | `/api/employees/{id}` | Any authenticated |
+| POST | `/api/employees` | ADMIN / HR |
+| PUT | `/api/employees/{id}` | ADMIN / HR |
+| DELETE | `/api/employees/{id}` | ADMIN |
 
-### Running the Frontend
-The prototype frontend is built into `index.html` at the root directory:
-1. Open [index.html](index.html) directly in any web browser, OR
-2. Serve it using a local server (e.g., the **Live Server** extension in VS Code).
-3. The frontend is pre-configured to communicate with the local backend running on `http://localhost:8080/api`.
+### Attendance
+| Method | Endpoint | Description |
+| :----- | :------- | :---------- |
+| GET | `/api/attendance` | All records (ADMIN/HR) |
+| POST | `/api/attendance` | Mark attendance |
+| PUT | `/api/attendance/{id}` | Update record |
+| DELETE | `/api/attendance/{id}` | Delete (ADMIN/HR) |
+
+### Payroll
+| Method | Endpoint | Description |
+| :----- | :------- | :---------- |
+| GET | `/api/payroll` | All payrolls (ADMIN/HR) |
+| POST | `/api/payroll` | Create payroll (net auto-calculated) |
+| PUT | `/api/payroll/{id}` | Update payroll |
+| GET | `/api/payroll/{id}/pdf` | Download PDF payslip |
+| DELETE | `/api/payroll/{id}` | Delete (ADMIN) |
+
+### Leave
+| Method | Endpoint | Description |
+| :----- | :------- | :---------- |
+| GET | `/api/leaves` | All leave requests (ADMIN/HR/MANAGER) |
+| POST | `/api/leaves` | Apply for leave (balance validated) |
+| PUT | `/api/leaves/{id}/status?status=APPROVED` | Approve/reject leave |
+| DELETE | `/api/leaves/{id}` | Delete (ADMIN) |
+
+### Performance Reviews
+| Method | Endpoint | Description |
+| :----- | :------- | :---------- |
+| GET | `/api/performance` | All reviews (ADMIN/HR/MANAGER) |
+| POST | `/api/performance` | Submit review |
+| PUT | `/api/performance/{id}` | Update review |
+| DELETE | `/api/performance/{id}` | Delete (ADMIN) |
+
+### Dashboard
+| Method | Endpoint | Description |
+| :----- | :------- | :---------- |
+| GET | `/api/dashboard/stats` | Real-time stats (total, active, present, absent) |
 
 ---
 
-## 🔌 API Endpoints Reference
+## 💡 Business Logic Highlights
 
-The backend exposes the following REST APIs under `/api`:
-*   `POST /api/auth/register` - Register a new user account.
-*   `POST /api/auth/login` - Authenticate and retrieve a JWT access token.
-*   `GET /api/employees` - List all employees (Admin/HR view).
-*   `GET /api/attendance` - Retrieve employee attendance records.
-*   `GET /api/payroll` - Retrieve employee payroll summaries.
-*   `GET /api/performance` - Retrieve performance reviews and OKR statuses.
-*   `GET /api/dashboard/stats` - Fetch aggregate dashboard statistics.
+- **Payroll**: Net salary = Basic + Allowances − Deductions (auto-calculated)
+- **Leave Balance**: 30 days default; deducted on approval, restored on rejection/cancellation
+- **PDF Payslips**: Generated server-side using OpenPDF, downloadable directly from dashboard
+- **RBAC**: ADMIN has full access; HR manages employees/payroll/leave; MANAGER can approve; EMPLOYEE can view own data
+
+---
+
+## 📦 Docker Compose Services
+
+```yaml
+services:
+  db:       PostgreSQL 17  (port 5432)
+  redis:    Redis 7        (port 6379)
+  backend:  Spring Boot    (port 8080)
+  frontend: Vite dev       (port 5173)
+```
+
+To restart with fresh data:
+```bash
+docker compose down -v   # removes volumes (clears DB)
+docker compose up --build
+```
+
+---
+
+*Prepared for Zidio Development – Java Full-Stack Domain | Reference: May–June 2026*
