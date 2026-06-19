@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { apiFetch, setAuthSession, User } from '../services/api';
+import { apiFetch, setAuthSession, type User } from '../services/api';
 
 interface AuthModalProps {
   onClose: () => void;

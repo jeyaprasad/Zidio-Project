@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { apiFetch, clearAuthSession, User } from '../services/api';
+import { apiFetch, type User } from '../services/api';
 
 interface DashboardProps {
   user: User;

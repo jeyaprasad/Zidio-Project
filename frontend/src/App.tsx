@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { getUser, clearAuthSession, User } from './services/api';
+import { getUser, clearAuthSession, type User } from './services/api';
 import { LandingPage } from './pages/LandingPage';
 import { Dashboard } from './pages/Dashboard';
 import { AuthModal } from './components/AuthModal';
