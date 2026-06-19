@@ -17,6 +17,7 @@ public class PerformanceService {
 
     private final PerformanceReviewRepository reviewRepository;
     private final EmployeeRepository employeeRepository;
+    private final EmailService emailService;
 
     public List<PerformanceDTO> getAllReviews() {
         return reviewRepository.findAll().stream()
@@ -53,7 +54,21 @@ public class PerformanceService {
                 .goals(dto.getGoals())
                 .build();
 
-        return PerformanceDTO.fromEntity(reviewRepository.save(review));
+        PerformanceReview savedReview = reviewRepository.save(review);
+
+        if (employee.getEmail() != null && !employee.getEmail().isEmpty()) {
+            emailService.sendEmail(
+                employee.getEmail(),
+                "New Performance Review Published",
+                "Hello " + employee.getFirstName() + ",\n\n" +
+                "A new performance review has been published for you by reviewer " + reviewer.getFirstName() + " " + reviewer.getLastName() + ".\n\n" +
+                "Rating: " + savedReview.getRating() + "/5\n" +
+                "Feedback: " + savedReview.getFeedback() + "\n\n" +
+                "Regards,\nNexusHR Portal"
+            );
+        }
+
+        return PerformanceDTO.fromEntity(savedReview);
     }
 
     public PerformanceDTO updateReview(Long id, PerformanceDTO dto) {

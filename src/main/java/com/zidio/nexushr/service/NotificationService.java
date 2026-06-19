@@ -7,6 +7,7 @@ import com.zidio.nexushr.exception.ResourceNotFoundException;
 import com.zidio.nexushr.repository.NotificationRepository;
 import com.zidio.nexushr.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public List<NotificationDTO> getUserNotifications(Long userId) {
         User user = userRepository.findById(userId)
@@ -52,7 +54,19 @@ public class NotificationService {
                 .read(false)
                 .build();
 
-        return NotificationDTO.fromEntity(notificationRepository.save(notification));
+        NotificationDTO savedDto = NotificationDTO.fromEntity(notificationRepository.save(notification));
+        
+        try {
+            messagingTemplate.convertAndSendToUser(
+                    user.getId().toString(),
+                    "/queue/notifications",
+                    savedDto
+            );
+        } catch (Exception e) {
+            System.err.println("Failed to push websocket notification: " + e.getMessage());
+        }
+
+        return savedDto;
     }
 
     public void markAsRead(Long id) {

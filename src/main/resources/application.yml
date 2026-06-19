@@ -17,11 +17,29 @@ spring:
       host: localhost
       port: 6379
 
+  mail:
+    host: ${SPRING_MAIL_HOST:localhost}
+    port: ${SPRING_MAIL_PORT:1025}
+    username: ${SPRING_MAIL_USERNAME:}
+    password: ${SPRING_MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
   jackson:
     serialization:
       write-dates-as-timestamps: false
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: UTC
+
+  ai:
+    huggingface:
+      chat:
+        api-key: ${HF_API_KEY:mock-key}
+        url: ${HF_ENDPOINT_URL:https://api-inference.huggingface.co/models/meta-llama/Llama-3-8b-chat-hf}
 
 app:
   jwt:

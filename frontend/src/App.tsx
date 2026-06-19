@@ -4,11 +4,23 @@ import { getUser, clearAuthSession, type User } from './services/api';
 import { LandingPage } from './pages/LandingPage';
 import { Dashboard } from './pages/Dashboard';
 import { AuthModal } from './components/AuthModal';
+import { useNotifications, type NotificationPayload } from './hooks/useNotifications';
 
 export const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(getUser());
   const [showAuth, setShowAuth] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [toasts, setToasts] = useState<NotificationPayload[]>([]);
+
+  useNotifications({
+    user,
+    onNotification: (notif) => {
+      setToasts((prev) => [...prev, notif]);
+      setTimeout(() => {
+        setToasts((prev) => prev.filter((t) => t.id !== notif.id));
+      }, 6000);
+    },
+  });
 
   const handleAuth = (loggedInUser: User) => {
     setUser(loggedInUser);
@@ -120,6 +132,41 @@ export const App: React.FC = () => {
 
         {/* Auth Modal Overlay */}
         {showAuth && <AuthModal onClose={() => setShowAuth(false)} onAuth={handleAuth} />}
+
+        {/* Real-time Toast Notification Stack */}
+        <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none">
+          {toasts.map((toast) => (
+            <div
+              key={toast.id}
+              className={`pointer-events-auto p-4 rounded-xl border backdrop-blur-md shadow-2xl transition-all duration-300 transform translate-y-0 flex flex-col gap-1 ${
+                theme === 'dark'
+                  ? 'bg-slate-900/90 border-white/10 text-white shadow-black/40'
+                  : 'bg-white/90 border-slate-200 text-slate-900 shadow-slate-300/40'
+              }`}
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <span className={`w-2.5 h-2.5 rounded-full ${
+                    toast.type === 'SUCCESS' ? 'bg-emerald-500' :
+                    toast.type === 'WARNING' ? 'bg-amber-500' :
+                    toast.type === 'ALERT' ? 'bg-rose-500' : 'bg-indigo-500'
+                  }`} />
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    {toast.type || 'NOTIFICATION'}
+                  </h4>
+                </div>
+                <button
+                  onClick={() => setToasts((prev) => prev.filter((t) => t.id !== toast.id))}
+                  className="text-slate-400 hover:text-slate-200 text-xs font-bold leading-none cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+              <h3 className="text-sm font-extrabold">{toast.title}</h3>
+              <p className="text-xs text-slate-300/80 leading-relaxed font-medium">{toast.message}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </Router>
   );

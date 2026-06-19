@@ -19,6 +19,7 @@ public class LeaveService {
 
     private final LeaveRepository leaveRepository;
     private final EmployeeRepository employeeRepository;
+    private final EmailService emailService;
 
     public List<LeaveDTO> getAllLeaves() {
         return leaveRepository.findAll().stream()
@@ -68,7 +69,21 @@ public class LeaveService {
                 .reason(dto.getReason())
                 .build();
 
-        return LeaveDTO.fromEntity(leaveRepository.save(leave));
+        Leave savedLeave = leaveRepository.save(leave);
+        
+        if (employee.getEmail() != null && !employee.getEmail().isEmpty()) {
+            emailService.sendEmail(
+                employee.getEmail(),
+                "Leave Request Submitted - " + savedLeave.getLeaveType(),
+                "Hello " + employee.getFirstName() + ",\n\n" +
+                "Your leave request for the period " + savedLeave.getStartDate() + " to " + savedLeave.getEndDate() +
+                " (" + durationDays + " days) has been successfully submitted and is currently PENDING review.\n\n" +
+                "Reason: " + savedLeave.getReason() + "\n\n" +
+                "Regards,\nNexusHR Portal"
+            );
+        }
+
+        return LeaveDTO.fromEntity(savedLeave);
     }
 
     @Transactional
@@ -106,7 +121,20 @@ public class LeaveService {
         }
 
         leave.setStatus(newStatus);
-        return LeaveDTO.fromEntity(leaveRepository.save(leave));
+        Leave savedLeave = leaveRepository.save(leave);
+
+        if (employee.getEmail() != null && !employee.getEmail().isEmpty()) {
+            emailService.sendEmail(
+                employee.getEmail(),
+                "Leave Request " + newStatus.name() + " - " + savedLeave.getLeaveType(),
+                "Hello " + employee.getFirstName() + ",\n\n" +
+                "Your leave request for the period " + savedLeave.getStartDate() + " to " + savedLeave.getEndDate() +
+                " has been " + newStatus.name() + ".\n\n" +
+                "Regards,\nNexusHR Portal"
+            );
+        }
+
+        return LeaveDTO.fromEntity(savedLeave);
     }
 
     @Transactional
