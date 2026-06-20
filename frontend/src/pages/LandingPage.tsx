@@ -28,13 +28,7 @@ const SECURITY = [
   { title: "Docker Containers", desc: "Immutable builds with multi-stage hardened images" },
 ];
 
-const ARCH_LAYERS = [
-  { label: "Frontend Layer", pills: [{ l: "React 19", c: "bg-indigo-500/10 border-indigo-500/35 text-indigo-300" }, { l: "TypeScript", c: "bg-indigo-500/10 border-indigo-500/35 text-indigo-300" }, { l: "Vite", c: "bg-indigo-500/10 border-indigo-500/35 text-indigo-300" }] },
-  { label: "API Gateway", pills: [{ l: "Spring Boot 3", c: "bg-teal-500/10 border-teal-500/35 text-teal-300" }, { l: "Spring Security", c: "bg-teal-500/10 border-teal-500/35 text-teal-300" }, { l: "REST / WebSocket", c: "bg-teal-500/10 border-teal-500/35 text-teal-300" }] },
-  { label: "AI Services", pills: [{ l: "Spring AI", c: "bg-indigo-500/10 border-indigo-500/35 text-indigo-300" }, { l: "Attrition Model", c: "bg-indigo-500/10 border-indigo-500/35 text-indigo-300" }, { l: "NLP Insights", c: "bg-indigo-500/10 border-indigo-500/35 text-indigo-300" }] },
-  { label: "Data & Cache", pills: [{ l: "PostgreSQL", c: "bg-slate-500/10 border-slate-500/35 text-slate-300" }, { l: "Redis", c: "bg-slate-500/10 border-slate-500/35 text-slate-300" }, { l: "S3 Storage", c: "bg-slate-500/10 border-slate-500/35 text-slate-300" }] },
-  { label: "Infrastructure", pills: [{ l: "Docker", c: "bg-slate-500/10 border-slate-500/35 text-slate-300" }, { l: "Kubernetes", c: "bg-slate-500/10 border-slate-500/35 text-slate-300" }, { l: "CI/CD", c: "bg-slate-500/10 border-slate-500/35 text-slate-300" }] },
-];
+
 
 const TECH = ["Java 21", "Spring Boot 3", "React 19", "TypeScript", "PostgreSQL", "Redis", "Docker", "Kubernetes", "Spring AI", "Prometheus", "Grafana", "JWT Auth"];
 
