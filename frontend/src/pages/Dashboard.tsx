@@ -296,6 +296,16 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
     }
   };
 
+  const handleLeaveStatus = async (id: number, status: 'APPROVED' | 'REJECTED') => {
+    try {
+      await apiFetch<any>(`/leaves/${id}/status?status=${status}`, { method: 'PUT' });
+      showToast(`Leave request ${status.toLowerCase()} successfully ✓`, false);
+      fetchData();
+    } catch (err: any) {
+      showToast(err.message || `Failed to update leave status`);
+    }
+  };
+
   type ColDef = { key: string; label: string; render?: (val: any, row: any) => React.ReactNode };
 
   const cols: Record<TabType, ColDef[]> = {
@@ -632,16 +642,35 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
               ))}
               <td className="px-5 py-3">
                 <div className="flex gap-1.5">
-                  <button
-                    className={`px-3 py-1 text-xs border rounded cursor-pointer transition-all ${
-                      isDark
-                        ? 'border-white/10 hover:border-indigo-400 hover:bg-indigo-500/10 text-slate-300'
-                        : 'border-slate-200 hover:border-indigo-600 hover:bg-indigo-50 text-slate-700'
-                    }`}
-                    onClick={() => openForm(item)}
-                  >
-                    Edit
-                  </button>
+                  {activeTab === 'leave' ? (
+                    item.status === 'PENDING' && (user.role === 'ADMIN' || user.role === 'HR' || user.role === 'MANAGER') ? (
+                      <>
+                        <button
+                          className="px-3 py-1 text-xs rounded border border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10 cursor-pointer transition-all"
+                          onClick={() => handleLeaveStatus(item.id, 'APPROVED')}
+                        >
+                          Approve
+                        </button>
+                        <button
+                          className="px-3 py-1 text-xs rounded border border-rose-500/40 text-rose-400 hover:bg-rose-500/10 cursor-pointer transition-all"
+                          onClick={() => handleLeaveStatus(item.id, 'REJECTED')}
+                        >
+                          Reject
+                        </button>
+                      </>
+                    ) : null
+                  ) : (
+                    <button
+                      className={`px-3 py-1 text-xs border rounded cursor-pointer transition-all ${
+                        isDark
+                          ? 'border-white/10 hover:border-indigo-400 hover:bg-indigo-500/10 text-slate-300'
+                          : 'border-slate-200 hover:border-indigo-600 hover:bg-indigo-50 text-slate-700'
+                      }`}
+                      onClick={() => openForm(item)}
+                    >
+                      Edit
+                    </button>
+                  )}
                   <button
                     className={`px-3 py-1 text-xs border rounded cursor-pointer transition-all ${
                       isDark
