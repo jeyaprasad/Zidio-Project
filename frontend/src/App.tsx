@@ -9,7 +9,7 @@ import { useNotifications, type NotificationPayload } from './hooks/useNotificat
 export const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(getUser());
   const [showAuth, setShowAuth] = useState(false);
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [theme, setTheme] = useState<'dark' | 'light'>('light');
   const [toasts, setToasts] = useState<NotificationPayload[]>([]);
 
   useNotifications({
@@ -34,23 +34,18 @@ export const App: React.FC = () => {
 
   return (
     <Router>
-      <div className={`min-h-screen transition-colors duration-200 selection:bg-indigo-500/30 selection:text-white ${
-        theme === 'dark' ? 'bg-[#080D1C] text-[#E2E8F0]' : 'bg-slate-50 text-slate-900'
+      <div className={`min-h-screen transition-colors duration-200 selection:bg-brand-navy/20 selection:text-brand-navy ${
+        theme === 'dark' ? 'bg-slate-900 text-slate-200' : 'bg-slate-50 text-slate-900'
       }`}>
         {/* Navbar */}
         <nav className={`fixed top-0 left-0 right-0 z-40 flex h-16 items-center justify-between px-[5%] backdrop-blur-md border-b transition-colors duration-200 ${
-          theme === 'dark' ? 'bg-slate-950/85 border-white/5' : 'bg-white/85 border-slate-200'
+          theme === 'dark' ? 'bg-slate-900/90 border-white/10' : 'bg-white/90 border-slate-200 shadow-sm'
         }`}>
           <div
-            className={`flex items-center gap-2.5 font-black text-lg tracking-tight cursor-pointer ${
-              theme === 'dark' ? 'text-white' : 'text-slate-900'
-            }`}
+            className="flex items-center gap-2 cursor-pointer"
             onClick={() => window.location.href = '/'}
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-teal-400 flex items-center justify-center text-xs font-black text-white">
-              N
-            </div>
-            NexusHR
+            <img src="/logo.png" alt="NexusHR" className="h-8 w-auto object-contain" />
           </div>
 
           <div className="flex items-center gap-3">
@@ -95,7 +90,7 @@ export const App: React.FC = () => {
                   Sign In
                 </button>
                 <button
-                  className="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow-lg hover:shadow-indigo-500/10 cursor-pointer transition-all"
+                  className="px-4 py-1.5 rounded-lg bg-brand-navy hover:bg-brand-navy/90 text-xs font-bold text-white shadow-md transition-all cursor-pointer"
                   onClick={() => setShowAuth(true)}
                 >
                   Get Started

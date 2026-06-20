@@ -379,7 +379,7 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
           <button
             onClick={() => downloadPayslip(row.id)}
             disabled={pdfLoading === row.id}
-            className="px-3 py-1 text-xs rounded border border-indigo-500/40 text-indigo-400 hover:bg-indigo-500/10 cursor-pointer transition-all disabled:opacity-50"
+            className="px-3 py-1 text-xs rounded border border-brand-navy/40 text-brand-navy hover:bg-brand-navy/10 cursor-pointer transition-all disabled:opacity-50"
           >
             {pdfLoading === row.id ? '...' : '⬇ PDF'}
           </button>
@@ -433,7 +433,7 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
               : v === 'SUBMITTED'
               ? 'bg-blue-500/15 text-blue-400'
               : v === 'ACKNOWLEDGED'
-              ? 'bg-indigo-500/15 text-indigo-400'
+              ? 'bg-brand-navy/15 text-brand-navy'
               : 'bg-slate-500/15 text-slate-400'
           }`}>{v}</span>
         ),
@@ -506,7 +506,7 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
             <select
               value={selectedEmployeeId}
               onChange={e => { setSelectedEmployeeId(e.target.value); setAiResult(''); }}
-              className={`w-full px-4 py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+              className={`w-full px-4 py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy ${
                 isDark ? 'bg-slate-900 border-white/10 text-white' : 'bg-slate-50 border-slate-200 text-slate-800'
               }`}
             >
@@ -531,7 +531,7 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
                 </div>
                 <div>
                   <span className="text-slate-500 block">Leave Balance</span>
-                  <span className="font-semibold text-teal-400">{selectedEmp.leaveBalance ?? 30} Days</span>
+                  <span className="font-semibold text-brand-light">{selectedEmp.leaveBalance ?? 30} Days</span>
                 </div>
                 <div>
                   <span className="text-slate-500 block">Status</span>
@@ -549,7 +549,7 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
             className={`w-full py-3 rounded-lg text-sm font-extrabold shadow-lg transition-all cursor-pointer ${
               aiLoading || !selectedEmployeeId
                 ? 'bg-slate-800 text-slate-500 cursor-not-allowed shadow-none'
-                : 'bg-gradient-to-r from-indigo-600 to-teal-500 hover:from-indigo-500 hover:to-teal-400 text-white hover:shadow-indigo-500/10'
+                : 'bg-gradient-to-r bg-brand-navy hover:bg-brand-navy/90 text-white hover:shadow-brand-navy/10'
             }`}
           >
             {aiLoading ? '🤖 Analysis Running...' : '🔍 Analyze Attrition Risk'}
@@ -572,9 +572,9 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
           }`}>
             {aiLoading ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/40 backdrop-blur-sm gap-4">
-                <div className="w-12 h-12 rounded-full border-4 border-slate-800 border-t-teal-400 animate-spin" />
+                <div className="w-12 h-12 rounded-full border-4 border-slate-800 border-t-brand-light animate-spin" />
                 <div className="flex flex-col items-center">
-                  <span className="text-sm font-bold text-teal-400 animate-pulse">Running Predictive Models...</span>
+                  <span className="text-sm font-bold text-brand-light animate-pulse">Running Predictive Models...</span>
                   <span className="text-slate-500 text-xs">Querying Hugging Face endpoint</span>
                 </div>
               </div>
@@ -606,7 +606,7 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
     if (loading) {
       return (
         <div className="flex items-center justify-center py-20 gap-3">
-          <div className="w-6 h-6 border-2 border-slate-700 border-t-indigo-500 rounded-full animate-spin" />
+          <div className="w-6 h-6 border-2 border-slate-700 border-t-brand-navy rounded-full animate-spin" />
           <span className={`text-sm ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Loading data…</span>
         </div>
       );
@@ -663,8 +663,8 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
                     <button
                       className={`px-3 py-1 text-xs border rounded cursor-pointer transition-all ${
                         isDark
-                          ? 'border-white/10 hover:border-indigo-400 hover:bg-indigo-500/10 text-slate-300'
-                          : 'border-slate-200 hover:border-indigo-600 hover:bg-indigo-50 text-slate-700'
+                          ? 'border-white/10 hover:border-brand-navy hover:bg-brand-navy/10 text-slate-300'
+                          : 'border-slate-200 hover:border-brand-navy hover:bg-brand-navy/10 text-slate-700'
                       }`}
                       onClick={() => openForm(item)}
                     >
@@ -691,9 +691,9 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
   };
 
   const statCards = [
-    { label: 'Total Employees', value: stats?.totalEmployees, color: 'from-indigo-400 to-teal-400', icon: '👥' },
+    { label: 'Total Employees', value: stats?.totalEmployees, color: 'from-brand-navy to-brand-light', icon: '👥' },
     { label: 'Active', value: stats?.activeEmployees, color: 'text-emerald-400', icon: '✅' },
-    { label: 'Present Today', value: stats?.presentToday, color: 'text-teal-400', icon: '🟢' },
+    { label: 'Present Today', value: stats?.presentToday, color: 'text-brand-light', icon: '🟢' },
     { label: 'Absent Today', value: stats?.absentToday, color: 'text-amber-400', icon: '🔴' },
   ];
 
@@ -718,14 +718,14 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
             HR Dashboard
           </h1>
           <p className={`text-sm mt-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-            Welcome back, <span className="font-semibold text-indigo-400">{user.fullName}</span>
+            Welcome back, <span className="font-semibold text-brand-navy">{user.fullName}</span>
             {' '}· <span className="capitalize">{user.role.toLowerCase()}</span>
           </p>
         </div>
         <div className="flex items-center gap-2">
           {activeTab !== 'ai' && (
             <button
-              className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm shadow-lg hover:shadow-indigo-500/20 cursor-pointer transition-all"
+              className="px-4 py-2 rounded-lg bg-brand-navy hover:bg-brand-navy text-white font-bold text-sm shadow-lg hover:shadow-brand-navy/20 cursor-pointer transition-all"
               onClick={() => openForm()}
             >
               + New Record
@@ -772,7 +772,7 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
             id={`tab-${t}`}
             className={`px-4 py-2 rounded-lg text-xs font-bold cursor-pointer border transition-all ${
               activeTab === t
-                ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-500/20'
+                ? 'bg-brand-navy border-brand-navy text-white shadow-lg shadow-brand-navy/20'
                 : isDark
                 ? 'border-white/5 hover:border-white/15 text-slate-400 hover:text-white bg-slate-950/30'
                 : 'border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-900 bg-white'
@@ -798,7 +798,7 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
               <textarea
                 placeholder="Type sample employee feedback here..."
                 id="ai-playground-input"
-                className="w-full h-24 rounded-lg border border-white/10 bg-slate-950 px-4 py-3 text-xs text-white outline-none focus:border-indigo-500 resize-none transition-colors"
+                className="w-full h-24 rounded-lg border border-white/10 bg-slate-950 px-4 py-3 text-xs text-white outline-none focus:border-brand-navy resize-none transition-colors"
               />
               <button
                 type="button"
@@ -835,14 +835,14 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
                     outputEl.innerText = 'Error: ' + err.message;
                   }
                 }}
-                className="mt-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg transition-all cursor-pointer"
+                className="mt-2 px-4 py-2 rounded-lg bg-brand-navy hover:bg-brand-navy text-white text-xs font-bold shadow-lg transition-all cursor-pointer"
               >
                 Run Sentiment Analysis
               </button>
             </div>
             <div className="bg-slate-950/60 rounded-lg border border-white/5 p-4 overflow-auto max-h-32">
               <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Analysis Result (Raw API Response)</div>
-              <pre id="ai-playground-output" className="text-xs text-indigo-300 font-mono whitespace-pre-wrap">
+              <pre id="ai-playground-output" className="text-xs text-brand-navy font-mono whitespace-pre-wrap">
                 No analysis run yet. Type feedback on the left and run analysis.
               </pre>
             </div>
@@ -928,8 +928,8 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
 
                   const baseInput = `w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-colors ${
                     isDark
-                      ? 'border-white/10 bg-slate-950 text-white focus:border-indigo-500 placeholder:text-slate-600'
-                      : 'border-slate-200 bg-white text-slate-900 focus:border-indigo-500'
+                      ? 'border-white/10 bg-slate-950 text-white focus:border-brand-navy placeholder:text-slate-600'
+                      : 'border-slate-200 bg-white text-slate-900 focus:border-brand-navy'
                   }`;
 
                   return (
@@ -972,7 +972,7 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
 
               <button
                 type="submit"
-                className="w-full mt-2 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold cursor-pointer shadow-lg hover:shadow-indigo-500/20 transition-all"
+                className="w-full mt-2 py-3 rounded-lg bg-brand-navy hover:bg-brand-navy text-white text-sm font-bold cursor-pointer shadow-lg hover:shadow-brand-navy/20 transition-all"
               >
                 {editingId ? '💾 Save Changes' : '✓ Create Record'}
               </button>
