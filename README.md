@@ -2,16 +2,7 @@
 
 ### AI-Enabled Enterprise HR & Workforce Intelligence Platform
 
-**Version 2.0 – Industry Edition** | Built by Zidio Development  
 _Production-Grade Java Full-Stack HR System with Real-Time Analytics_
-
-[![Java](https://img.shields.io/badge/Java-21-orange)](https://adoptium.net/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-green)](https://spring.io/projects/spring-boot)
-[![React](https://img.shields.io/badge/React-19-blue)](https://react.dev/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-blue)](https://www.docker.com/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue)](https://www.postgresql.org/)
-
----
 
 ## 🚀 Quick Start (Docker Desktop)
 
@@ -172,7 +163,3 @@ To restart with fresh data:
 docker compose down -v   # removes volumes (clears DB)
 docker compose up --build
 ```
-
----
-
-*Prepared for Zidio Development – Java Full-Stack Domain | Reference: May–June 2026*
