@@ -15,10 +15,10 @@ import java.util.Map;
 @Service
 public class HuggingFaceService {
 
-    @Value("${huggingface.api.token}")
+    @Value("${huggingface.api.token:}")
     private String token;
 
-    @Value("${huggingface.api.url}")
+    @Value("${huggingface.api.url:https://api-inference.huggingface.co/models/cardiffnlp/twitter-roberta-base-sentiment-latest}")
     private String apiUrl;
 
     private final RestTemplate restTemplate = new RestTemplate();

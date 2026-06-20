@@ -1,7 +1,0 @@
-spring:
-  application:
-    name: nexushr
-huggingface:
-  api:
-    token: ${HUGGINGFACE_API_TOKEN:}
-    url: "https://api-inference.huggingface.co/models/cardiffnlp/twitter-roberta-base-sentiment-latest"

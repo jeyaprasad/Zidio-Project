@@ -17,3 +17,8 @@ app:
   jwt:
     secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970337336763979244226452948404D635166546A576E5A7234753778214125442A47
     expiration-ms: 86400000
+
+huggingface:
+  api:
+    token: mock-token
+    url: https://api-inference.huggingface.co/models/cardiffnlp/twitter-roberta-base-sentiment-latest
