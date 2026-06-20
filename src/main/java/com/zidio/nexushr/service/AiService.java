@@ -20,7 +20,7 @@ public class AiService {
             return chatModel.call(new Prompt(instruction))
                     .getResult()
                     .getOutput()
-                    .getContent();
+                    .getText();
         } catch (Exception e) {
             return "AI Inference failed: " + e.getMessage() 
                     + "\n(Please verify your HF_API_KEY and HF_ENDPOINT_URL settings in application.yml)";
