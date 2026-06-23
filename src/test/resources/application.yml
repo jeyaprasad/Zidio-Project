@@ -12,6 +12,11 @@ spring:
     redis:
       host: localhost
       port: 6379
+  ai:
+    huggingface:
+      chat:
+        api-key: mock-key-for-testing
+        url: https://api-inference.huggingface.co/models/test
 
 app:
   jwt:

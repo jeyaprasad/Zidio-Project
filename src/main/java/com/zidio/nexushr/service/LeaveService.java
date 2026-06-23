@@ -7,6 +7,8 @@ import com.zidio.nexushr.exception.ResourceNotFoundException;
 import com.zidio.nexushr.repository.EmployeeRepository;
 import com.zidio.nexushr.repository.LeaveRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +23,8 @@ public class LeaveService {
     private final EmployeeRepository employeeRepository;
     private final EmailService emailService;
 
-    public List<LeaveDTO> getAllLeaves() {
-        return leaveRepository.findAll().stream()
-                .map(LeaveDTO::fromEntity)
-                .toList();
+    public Page<LeaveDTO> getAllLeaves(Pageable pageable) {
+        return leaveRepository.findAll(pageable).map(LeaveDTO::fromEntity);
     }
 
     public LeaveDTO getLeaveById(Long id) {
@@ -109,14 +109,14 @@ public class LeaveService {
                 throw new IllegalArgumentException("Cannot approve leave. Employee has insufficient balance (" 
                         + employee.getLeaveBalance() + " days).");
             }
-            employee.setLeaveBalance(employee.getLeaveBalance() - (int) durationDays);
+            employee.setLeaveBalance(employee.getLeaveBalance() - Math.toIntExact(durationDays));
             employeeRepository.save(employee);
         } else if (oldStatus == Leave.LeaveStatus.APPROVED 
                 && (newStatus == Leave.LeaveStatus.CANCELLED || newStatus == Leave.LeaveStatus.REJECTED)) {
             if (employee.getLeaveBalance() == null) {
                 employee.setLeaveBalance(30);
             }
-            employee.setLeaveBalance(employee.getLeaveBalance() + (int) durationDays);
+            employee.setLeaveBalance(employee.getLeaveBalance() + Math.toIntExact(durationDays));
             employeeRepository.save(employee);
         }
 

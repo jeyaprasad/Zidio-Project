@@ -8,6 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -20,8 +23,8 @@ public class AttendanceController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
-    public ResponseEntity<List<AttendanceDTO>> getAllAttendance() {
-        return ResponseEntity.ok(attendanceService.getAllAttendance());
+    public ResponseEntity<Page<AttendanceDTO>> getAllAttendance(Pageable pageable) {
+        return ResponseEntity.ok(attendanceService.getAllAttendance(pageable));
     }
 
     @GetMapping("/{id}")

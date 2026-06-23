@@ -7,6 +7,8 @@ import com.zidio.nexushr.exception.ResourceNotFoundException;
 import com.zidio.nexushr.repository.EmployeeRepository;
 import com.zidio.nexushr.repository.PayrollRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -26,10 +28,8 @@ public class PayrollService {
         return b.add(a).subtract(d);
     }
 
-    public List<PayrollDTO> getAllPayrolls() {
-        return payrollRepository.findAll().stream()
-                .map(PayrollDTO::fromEntity)
-                .toList();
+    public Page<PayrollDTO> getAllPayrolls(Pageable pageable) {
+        return payrollRepository.findAll(pageable).map(PayrollDTO::fromEntity);
     }
 
     public PayrollDTO getPayrollById(Long id) {

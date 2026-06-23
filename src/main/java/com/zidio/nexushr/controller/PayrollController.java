@@ -7,6 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 
 @RestController
@@ -18,8 +21,8 @@ public class PayrollController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
-    public ResponseEntity<List<PayrollDTO>> getAllPayrolls() {
-        return ResponseEntity.ok(payrollService.getAllPayrolls());
+    public ResponseEntity<Page<PayrollDTO>> getAllPayrolls(Pageable pageable) {
+        return ResponseEntity.ok(payrollService.getAllPayrolls(pageable));
     }
 
     @GetMapping("/{id}")

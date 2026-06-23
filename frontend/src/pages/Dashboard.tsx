@@ -89,8 +89,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout, theme = 'd
     setLoading(true);
     setData([]);
     try {
-      const res = await apiFetch<any[]>(TAB_API[activeTab]);
-      setData(Array.isArray(res) ? res : []);
+      const res = await apiFetch<any>(TAB_API[activeTab]);
+      const dataArray = Array.isArray(res) ? res : (res && Array.isArray(res.content) ? res.content : []);
+      setData(dataArray);
     } catch (err: any) {
       showToast(err.message || 'Failed to fetch data');
     } finally {
@@ -108,8 +109,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout, theme = 'd
 
   useEffect(() => {
     if (activeTab === 'ai') {
-      apiFetch<any[]>('/employees')
-        .then(res => setEmployeesList(Array.isArray(res) ? res : []))
+      apiFetch<any>('/employees')
+        .then(res => {
+          const arr = Array.isArray(res) ? res : (res && Array.isArray(res.content) ? res.content : []);
+          setEmployeesList(arr);
+        })
         .catch(err => showToast(err.message || 'Failed to fetch employees list'));
     }
   }, [activeTab]);
@@ -125,11 +129,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout, theme = 'd
     setAiLoading(true);
     setAiResult('');
     try {
-      const [leaves, reviews, payrolls] = await Promise.all([
-        apiFetch<any[]>('/leaves'),
-        apiFetch<any[]>('/performance'),
-        apiFetch<any[]>('/payroll'),
+      const [leavesRes, reviewsRes, payrollsRes] = await Promise.all([
+        apiFetch<any>('/leaves'),
+        apiFetch<any>('/performance'),
+        apiFetch<any>('/payroll'),
       ]);
+      const leaves = Array.isArray(leavesRes) ? leavesRes : (leavesRes && Array.isArray(leavesRes.content) ? leavesRes.content : []);
+      const reviews = Array.isArray(reviewsRes) ? reviewsRes : (reviewsRes && Array.isArray(reviewsRes.content) ? reviewsRes.content : []);
+      const payrolls = Array.isArray(payrollsRes) ? payrollsRes : (payrollsRes && Array.isArray(payrollsRes.content) ? payrollsRes.content : []);
 
       const empLeaves = Array.isArray(leaves) ? leaves.filter(l => l.employeeId?.toString() === selectedEmployeeId || (l.employee && l.employee.id?.toString() === selectedEmployeeId)) : [];
       const empReviews = Array.isArray(reviews) ? reviews.filter(r => r.employeeId?.toString() === selectedEmployeeId || (r.employee && r.employee.id?.toString() === selectedEmployeeId)) : [];
@@ -815,8 +822,8 @@ Current Net Salary: ${latestPayroll ? latestPayroll.netSalary : 'N/A'}
                   try {
                     const res = await apiFetch<any>('/ai/sentiment', {
                       method: 'POST',
-                      headers: { 'Content-Type': 'text/plain' },
-                      body: val
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ text: val })
                     });
                     
                     let display = '';

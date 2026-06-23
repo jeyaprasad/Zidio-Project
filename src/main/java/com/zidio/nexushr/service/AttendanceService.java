@@ -9,6 +9,9 @@ import com.zidio.nexushr.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,10 +22,8 @@ public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final EmployeeRepository employeeRepository;
 
-    public List<AttendanceDTO> getAllAttendance() {
-        return attendanceRepository.findAll().stream()
-                .map(AttendanceDTO::fromEntity)
-                .toList();
+    public Page<AttendanceDTO> getAllAttendance(Pageable pageable) {
+        return attendanceRepository.findAll(pageable).map(AttendanceDTO::fromEntity);
     }
 
     public AttendanceDTO getAttendanceById(Long id) {

@@ -27,7 +27,7 @@ public class AiController {
     }
 
     @PostMapping("/sentiment")
-    public String analyze(@RequestBody String feedback) {
-        return huggingFaceService.analyzeSentiment(feedback);
+    public String analyze(@RequestBody Map<String, String> request) {
+        return huggingFaceService.analyzeSentiment(request.getOrDefault("text", ""));
     }
 }

@@ -9,6 +9,9 @@ import com.zidio.nexushr.repository.PerformanceReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 
 @Service
@@ -20,10 +23,8 @@ public class PerformanceService {
     private final EmailService emailService;
     private final HuggingFaceService huggingFaceService;
 
-    public List<PerformanceDTO> getAllReviews() {
-        return reviewRepository.findAll().stream()
-                .map(PerformanceDTO::fromEntity)
-                .toList();
+    public Page<PerformanceDTO> getAllReviews(Pageable pageable) {
+        return reviewRepository.findAll(pageable).map(PerformanceDTO::fromEntity);
     }
 
     public PerformanceDTO getReviewById(Long id) {
