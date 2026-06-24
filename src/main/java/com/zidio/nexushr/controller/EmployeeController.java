@@ -2,6 +2,7 @@ package com.zidio.nexushr.controller;
 
 import com.zidio.nexushr.dto.EmployeeDTO;
 import com.zidio.nexushr.service.EmployeeService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,13 +37,13 @@ public class EmployeeController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
-    public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody EmployeeDTO dto) {
+    public ResponseEntity<EmployeeDTO> createEmployee(@Valid @RequestBody EmployeeDTO dto) {
         return ResponseEntity.ok(employeeService.createEmployee(dto));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
-    public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable Long id, @RequestBody EmployeeDTO dto) {
+    public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable Long id, @Valid @RequestBody EmployeeDTO dto) {
         return ResponseEntity.ok(employeeService.updateEmployee(id, dto));
     }
 

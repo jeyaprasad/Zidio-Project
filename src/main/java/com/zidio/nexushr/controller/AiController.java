@@ -12,7 +12,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/ai")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class AiController {
 
     private final AiService aiService;

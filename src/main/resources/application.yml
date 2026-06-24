@@ -35,6 +35,8 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: UTC
 
+  # spring.ai.huggingface.chat: Configures the Spring AI starter framework
+  # used by AiService for general chat/text generation models (e.g. Llama).
   ai:
     huggingface:
       chat:
@@ -43,7 +45,7 @@ spring:
 
 app:
   jwt:
-    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970337336763979244226452948404D635166546A576E5A7234753778214125442A47
+    secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970337336763979244226452948404D635166546A576E5A7234753778214125442A47}
     expiration-ms: 86400000
 
 springdoc:
@@ -72,6 +74,8 @@ management:
     prometheus:
       enabled: true
 
+# huggingface.api: Custom direct REST client settings
+# used by HuggingFaceService for specific model queries (e.g. sentiment analysis).
 huggingface:
   api:
     token: ${HUGGINGFACE_API_TOKEN:}

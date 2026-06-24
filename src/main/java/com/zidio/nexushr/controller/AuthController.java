@@ -27,12 +27,8 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refresh(@RequestHeader("Authorization") String refreshTokenHeader) {
-        String token = refreshTokenHeader;
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
-        return ResponseEntity.ok(authService.refreshToken(token));
+    public ResponseEntity<AuthResponse> refresh(@RequestHeader("X-Refresh-Token") String refreshToken) {
+        return ResponseEntity.ok(authService.refreshToken(refreshToken));
     }
 
     @PostMapping("/logout")

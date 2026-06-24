@@ -17,6 +17,9 @@ spring:
       chat:
         api-key: mock-key-for-testing
         url: https://api-inference.huggingface.co/models/test
+  mail:
+    host: localhost
+    port: 1025
 
 app:
   jwt:

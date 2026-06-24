@@ -1,5 +1,6 @@
 package com.zidio.nexushr.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class HuggingFaceService {
 
     @Value("${huggingface.api.token:}")
@@ -21,7 +23,7 @@ public class HuggingFaceService {
     @Value("${huggingface.api.url:https://api-inference.huggingface.co/models/cardiffnlp/twitter-roberta-base-sentiment-latest}")
     private String apiUrl;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
     public String analyzeSentiment(String text) {
         if (text == null || text.trim().isEmpty()) {

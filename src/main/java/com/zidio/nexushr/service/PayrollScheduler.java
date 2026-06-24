@@ -28,6 +28,7 @@ public class PayrollScheduler {
                 com.zidio.nexushr.dto.PayrollDTO dto = com.zidio.nexushr.dto.PayrollDTO.builder()
                         .employeeId(employee.getId())
                         .payPeriod(java.time.LocalDate.now().getMonth().name() + " " + java.time.LocalDate.now().getYear())
+                        .basicSalary(employee.getSalary())
                         .build();
                 payrollService.createPayroll(dto);
                 log.info("Successfully generated payroll for employee ID: {}", employee.getId());
