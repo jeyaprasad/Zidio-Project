@@ -27,6 +27,12 @@ public class HuggingFaceService {
         if (text == null || text.trim().isEmpty()) {
             return "NEUTRAL";
         }
+
+        // Fall back to local analysis if no token is configured
+        if (token == null || token.trim().isEmpty() || "mock-key".equals(token)) {
+            return analyzeSentimentLocally(text);
+        }
+
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(token);
@@ -45,7 +51,7 @@ public class HuggingFaceService {
 
             String responseBody = response.getBody();
             if (responseBody == null) {
-                return "NEUTRAL";
+                return analyzeSentimentLocally(text);
             }
 
             com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
@@ -73,9 +79,42 @@ public class HuggingFaceService {
                     }
                 }
             }
-            return "NEUTRAL";
+            return analyzeSentimentLocally(text);
         } catch (Exception e) {
-            System.err.println("Error calling Hugging Face API: " + e.getMessage());
+            System.err.println("Error calling Hugging Face API: " + e.getMessage() + ". Falling back to local analysis.");
+            return analyzeSentimentLocally(text);
+        }
+    }
+
+    private String analyzeSentimentLocally(String text) {
+        if (text == null || text.trim().isEmpty()) {
+            return "NEUTRAL";
+        }
+        String lower = text.toLowerCase();
+
+        String[] positiveWords = {"great", "excellent", "good", "outstanding", "happy", "love", "satisfy", "satisfied", "success", "successful", "progress", "initiative", "strong", "positive", "amazing", "wonderful", "help", "helpful"};
+        String[] negativeWords = {"bad", "poor", "unhappy", "difficult", "fail", "failure", "struggle", "disappointed", "disappointing", "negative", "weak", "slow", "missing", "delay", "issue", "problem", "concern"};
+
+        int positiveCount = 0;
+        int negativeCount = 0;
+
+        for (String word : positiveWords) {
+            if (lower.contains(word)) {
+                positiveCount++;
+            }
+        }
+
+        for (String word : negativeWords) {
+            if (lower.contains(word)) {
+                negativeCount++;
+            }
+        }
+
+        if (positiveCount > negativeCount) {
+            return "POSITIVE";
+        } else if (negativeCount > positiveCount) {
+            return "NEGATIVE";
+        } else {
             return "NEUTRAL";
         }
     }

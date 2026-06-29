@@ -19,7 +19,12 @@ public class PerformanceDTO {
     private Long reviewerId;
     private String reviewerName;
     private LocalDate reviewDate;
+
+    @jakarta.validation.constraints.NotNull(message = "Rating is required")
+    @jakarta.validation.constraints.Min(value = 1, message = "Rating must be at least 1")
+    @jakarta.validation.constraints.Max(value = 5, message = "Rating must be at most 5")
     private Integer rating;
+
     private String feedback;
     private String goals;
     private String status;

@@ -36,6 +36,9 @@ public class EmployeeService {
     }
 
     public EmployeeDTO createEmployee(EmployeeDTO dto) {
+        if (employeeRepository.findByEmployeeId(dto.getEmployeeId()).isPresent()) {
+            throw new DuplicateResourceException("Employee ID already exists: " + dto.getEmployeeId());
+        }
         if (employeeRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new DuplicateResourceException("Email already exists: " + dto.getEmail());
         }

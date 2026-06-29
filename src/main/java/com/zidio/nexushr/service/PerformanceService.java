@@ -22,6 +22,7 @@ public class PerformanceService {
     private final EmployeeRepository employeeRepository;
     private final EmailService emailService;
     private final HuggingFaceService huggingFaceService;
+    private final NotificationService notificationService;
 
     public Page<PerformanceDTO> getAllReviews(Pageable pageable) {
         return reviewRepository.findAll(pageable).map(PerformanceDTO::fromEntity);
@@ -60,6 +61,19 @@ public class PerformanceService {
                 .build();
 
         PerformanceReview savedReview = reviewRepository.save(review);
+
+        if (employee.getUser() != null) {
+            try {
+                notificationService.createNotification(com.zidio.nexushr.dto.NotificationDTO.builder()
+                        .userId(employee.getUser().getId())
+                        .title("Performance Review Published")
+                        .message("A new performance review has been published for you by reviewer " + reviewer.getFirstName() + " " + reviewer.getLastName() + ". Rating: " + savedReview.getRating() + "/5.")
+                        .type("INFO")
+                        .build());
+            } catch (Exception e) {
+                System.err.println("Failed to send WebSocket notification: " + e.getMessage());
+            }
+        }
 
         if (employee.getEmail() != null && !employee.getEmail().isEmpty()) {
             emailService.sendEmail(

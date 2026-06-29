@@ -38,13 +38,13 @@ public class PerformanceController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER')")
-    public ResponseEntity<PerformanceDTO> createReview(@RequestBody PerformanceDTO dto) {
+    public ResponseEntity<PerformanceDTO> createReview(@jakarta.validation.Valid @RequestBody PerformanceDTO dto) {
         return ResponseEntity.ok(performanceService.createReview(dto));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER')")
-    public ResponseEntity<PerformanceDTO> updateReview(@PathVariable Long id, @RequestBody PerformanceDTO dto) {
+    public ResponseEntity<PerformanceDTO> updateReview(@PathVariable Long id, @jakarta.validation.Valid @RequestBody PerformanceDTO dto) {
         return ResponseEntity.ok(performanceService.updateReview(id, dto));
     }
 

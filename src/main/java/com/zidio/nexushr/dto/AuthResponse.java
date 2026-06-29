@@ -1,6 +1,5 @@
 package com.zidio.nexushr.dto;
 
-import com.zidio.nexushr.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

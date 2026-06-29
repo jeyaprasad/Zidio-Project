@@ -38,9 +38,15 @@ function AttendancePage() {
 
   useEffect(() => {
     apiFetch("/api/attendance?page=0&size=50")
-      .then((r) => r.json())
-      .then((d) => setRecords(d.content ?? d))
-      .catch(console.error)
+      .then((r) => {
+        if (!r.ok) throw new Error("Failed to load attendance");
+        return r.json();
+      })
+      .then((d) => setRecords(Array.isArray(d) ? d : (d.content ?? [])))
+      .catch((err) => {
+        console.error(err);
+        setRecords([]);
+      })
       .finally(() => setLoading(false));
   }, []);
 

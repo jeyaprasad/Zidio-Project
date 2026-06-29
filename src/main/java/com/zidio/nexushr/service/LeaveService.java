@@ -22,6 +22,7 @@ public class LeaveService {
     private final LeaveRepository leaveRepository;
     private final EmployeeRepository employeeRepository;
     private final EmailService emailService;
+    private final NotificationService notificationService;
 
     public Page<LeaveDTO> getAllLeaves(Pageable pageable) {
         return leaveRepository.findAll(pageable).map(LeaveDTO::fromEntity);
@@ -70,6 +71,19 @@ public class LeaveService {
                 .build();
 
         Leave savedLeave = leaveRepository.save(leave);
+
+        if (employee.getUser() != null) {
+            try {
+                notificationService.createNotification(com.zidio.nexushr.dto.NotificationDTO.builder()
+                        .userId(employee.getUser().getId())
+                        .title("Leave Request Submitted")
+                        .message("Your leave request for the period " + savedLeave.getStartDate() + " to " + savedLeave.getEndDate() + " (" + durationDays + " days) has been submitted.")
+                        .type("INFO")
+                        .build());
+            } catch (Exception e) {
+                System.err.println("Failed to send WebSocket notification: " + e.getMessage());
+            }
+        }
         
         if (employee.getEmail() != null && !employee.getEmail().isEmpty()) {
             emailService.sendEmail(
@@ -122,6 +136,19 @@ public class LeaveService {
 
         leave.setStatus(newStatus);
         Leave savedLeave = leaveRepository.save(leave);
+
+        if (employee.getUser() != null) {
+            try {
+                notificationService.createNotification(com.zidio.nexushr.dto.NotificationDTO.builder()
+                        .userId(employee.getUser().getId())
+                        .title("Leave Request " + newStatus.name())
+                        .message("Your leave request for the period " + savedLeave.getStartDate() + " to " + savedLeave.getEndDate() + " has been " + newStatus.name().toLowerCase() + ".")
+                        .type(newStatus == Leave.LeaveStatus.APPROVED ? "SUCCESS" : "WARNING")
+                        .build());
+            } catch (Exception e) {
+                System.err.println("Failed to send WebSocket notification: " + e.getMessage());
+            }
+        }
 
         if (employee.getEmail() != null && !employee.getEmail().isEmpty()) {
             emailService.sendEmail(

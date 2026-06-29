@@ -19,6 +19,7 @@ public class PayrollScheduler {
     private final EmployeeRepository employeeRepository;
     private final PayrollService payrollService;
     private final EmailService emailService;
+    private final NotificationService notificationService;
 
     // Run on the 28th of every month at 1:00 AM
     @Scheduled(cron = "0 0 1 28 * ?")
@@ -40,6 +41,19 @@ public class PayrollScheduler {
                 PayrollDTO result = payrollService.createPayroll(dto);
                 successCount++;
                 log.info("Payroll generated for employee ID: {} — Net: {}", employee.getId(), result.getNetSalary());
+
+                if (employee.getUser() != null) {
+                    try {
+                        notificationService.createNotification(com.zidio.nexushr.dto.NotificationDTO.builder()
+                                .userId(employee.getUser().getId())
+                                .title("Payslip Generated")
+                                .message("Your payslip for " + payPeriod + " has been generated. Net Salary: $" + result.getNetSalary() + ".")
+                                .type("SUCCESS")
+                                .build());
+                    } catch (Exception ex) {
+                        log.error("Failed to send WebSocket notification for payroll", ex);
+                    }
+                }
 
                 // ─── F-07: Send payslip notification email ────────────────────
                 if (employee.getEmail() != null && !employee.getEmail().isEmpty()) {

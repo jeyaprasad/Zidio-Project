@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { getUser, logout } from "../lib/auth";
 
 export const NAV_ITEMS = [
@@ -10,24 +12,29 @@ export const NAV_ITEMS = [
 ];
 
 export function Sidebar() {
-  const user = getUser();
+  const [user, setUser] = useState<{ fullName: string; role: string } | null>(null);
+  useEffect(() => {
+    setUser(getUser());
+  }, []);
   return (
     <aside className="w-56 min-h-screen border-r border-border flex flex-col bg-background sticky top-0">
       <div className="px-6 py-5 border-b border-border">
-        <a href="/" className="font-display text-lg font-extrabold tracking-tighter">
+        <Link to="/" className="font-display text-lg font-extrabold tracking-tighter">
           NEXUS<span className="text-primary">HR</span>
-        </a>
+        </Link>
       </div>
       <nav className="flex-1 py-4 px-3 space-y-1">
         {NAV_ITEMS.map((item) => (
-          <a
+          <Link
             key={item.href}
-            href={item.href}
-            className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-sm text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
+            to={item.href}
+            activeProps={{ className: "text-foreground bg-foreground/5" }}
+            inactiveProps={{ className: "text-muted-foreground hover:text-foreground hover:bg-foreground/5" }}
+            className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-sm transition-colors"
           >
             <span className="text-xs">{item.icon}</span>
             {item.label}
-          </a>
+          </Link>
         ))}
       </nav>
       <div className="px-4 py-4 border-t border-border">
@@ -36,7 +43,7 @@ export function Sidebar() {
         <button
           id="logout-btn"
           onClick={logout}
-          className="mt-3 text-xs text-muted-foreground hover:text-destructive transition-colors"
+          className="mt-3 text-xs text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
         >
           Sign out →
         </button>
