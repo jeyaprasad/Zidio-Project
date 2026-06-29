@@ -1,30 +1,14 @@
 import { defineConfig } from 'vite';
+import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
-import path from 'path';
+import tsConfigPaths from 'vite-tsconfig-paths';
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-  },
-  server: {
-    watch: {
-      usePolling: true,
-    },
-    proxy: {
-      '/api': {
-        target: process.env.VITE_API_URL || 'http://localhost:8080',
-        changeOrigin: true,
-      },
-      '/ws': {
-        target: process.env.VITE_WS_URL || 'ws://localhost:8080',
-        ws: true,
-        changeOrigin: true,
-      },
-    },
-  },
+  plugins: [
+    tanstackStart(),
+    react(),
+    tailwindcss(),
+    tsConfigPaths(),
+  ],
 });

@@ -58,7 +58,7 @@ public class AuthService {
                 .token(token)
                 .email(user.getEmail())
                 .fullName(user.getFullName())
-                .role(user.getRole())
+                .role(user.getRole().name())
                 .userId(user.getId())
                 .refreshToken(refreshToken)
                 .build();
@@ -78,7 +78,7 @@ public class AuthService {
                 .token(token)
                 .email(user.getEmail())
                 .fullName(user.getFullName())
-                .role(user.getRole())
+                .role(user.getRole().name())
                 .userId(user.getId())
                 .refreshToken(refreshToken)
                 .build();
@@ -104,7 +104,7 @@ public class AuthService {
                 .token(newToken)
                 .email(user.getEmail())
                 .fullName(user.getFullName())
-                .role(user.getRole())
+                .role(user.getRole().name())
                 .userId(user.getId())
                 .refreshToken(newRefreshToken)
                 .build();

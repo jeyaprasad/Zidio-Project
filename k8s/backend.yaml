@@ -4,9 +4,17 @@ metadata:
   name: backend-config
 data:
   SPRING_PROFILES_ACTIVE: "prod"
-  SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/nexushr"
-  SPRING_DATA_REDIS_HOST: "redis"
-  OPENAI_MODEL: "gpt-4o-mini"
+  # DB_HOST must match the Kubernetes Service name for PostgreSQL
+  DB_HOST: "db"
+  DB_PORT: "5432"
+  DB_NAME: "nexushr"
+  # Redis Service name
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  # HuggingFace model endpoint (app reads HF_ENDPOINT_URL)
+  HF_ENDPOINT_URL: "https://api-inference.huggingface.co/models/meta-llama/Llama-3-8b-chat-hf"
+  # CORS — comma-separated list of allowed frontend origins
+  APP_CORS_ALLOWED_ORIGINS: "http://localhost:3000"
 ---
 apiVersion: v1
 kind: Secret
@@ -14,9 +22,14 @@ metadata:
   name: backend-secret
 type: Opaque
 data:
-  # Base64 encoded values (defaults to placeholder "mock-key" or empty for testing)
-  OPENAI_API_KEY: bW9jay1rZXk= # base64 for "mock-key"
+  # Base64-encoded values. Replace ALL placeholders before deploying to production.
+  # Generate JWT secret: openssl rand -hex 64 | base64
+  APP_JWT_SECRET: "" # TODO: set before deploy
+  # HuggingFace API key (app reads HF_API_KEY)
+  HF_API_KEY: "" # TODO: set before deploy — base64(your-hf-token)
   SENTRY_DSN: ""
+  DB_USERNAME: cG9zdGdyZXM= # base64 for "postgres" — change in prod
+  DB_PASSWORD: cG9zdGdyZXM= # base64 for "postgres" — change in prod
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -25,7 +38,7 @@ metadata:
   labels:
     app: backend
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: backend
@@ -45,28 +58,50 @@ spec:
             - configMapRef:
                 name: backend-config
           env:
-            - name: OPENAI_API_KEY
+            - name: APP_JWT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: backend-secret
-                  key: OPENAI_API_KEY
+                  key: APP_JWT_SECRET
+            - name: HF_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: HF_API_KEY
             - name: SENTRY_DSN
               valueFrom:
                 secretKeyRef:
                   name: backend-secret
                   key: SENTRY_DSN
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: DB_PASSWORD
           livenessProbe:
             httpGet:
               path: /actuator/health
               port: 8080
-            initialDelaySeconds: 30
+            initialDelaySeconds: 45
             periodSeconds: 15
           readinessProbe:
             httpGet:
               path: /actuator/health
               port: 8080
-            initialDelaySeconds: 20
+            initialDelaySeconds: 30
             periodSeconds: 10
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
 ---
 apiVersion: v1
 kind: Service

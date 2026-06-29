@@ -12,7 +12,7 @@ public class AuthResponse {
     private String token;
     private String email;
     private String fullName;
-    private Role role;
+    private String role;
     private Long userId;
     private String refreshToken;
 }

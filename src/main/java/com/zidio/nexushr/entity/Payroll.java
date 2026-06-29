@@ -31,6 +31,9 @@ public class Payroll {
 
     private BigDecimal deductions;
 
+    @Column(precision = 15, scale = 2)
+    private BigDecimal taxAmount;
+
     @Column(nullable = false)
     private BigDecimal netSalary;
 

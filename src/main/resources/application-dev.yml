@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:nexushr
+    url: jdbc:h2:mem:nexushr;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
     driver-class-name: org.h2.Driver
     username: sa
     password:
@@ -10,7 +10,14 @@ spring:
       enabled: true
       path: /h2-console
 
+  # Disable Flyway in dev — Flyway migrations use PostgreSQL-specific syntax (enums, etc.)
+  # H2 in-memory DB is managed by Hibernate ddl-auto instead
+  flyway:
+    enabled: false
+
   jpa:
+    hibernate:
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true

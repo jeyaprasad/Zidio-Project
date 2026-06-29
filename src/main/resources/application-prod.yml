@@ -1,12 +1,32 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/nexushr
-    username: postgres
-    password: postgres
+    # In Docker Compose and K8s the DB service is named 'db'. Override DB_HOST for other environments.
+    url: jdbc:postgresql://${DB_HOST:db}:${DB_PORT:5432}/${DB_NAME:nexushr}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  data:
+    redis:
+      # In Docker Compose and K8s the Redis service is named 'redis'
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
 
   jpa:
+    hibernate:
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
+        format_sql: false
+
+  # Disable H2 console in production
+  h2:
+    console:
+      enabled: false

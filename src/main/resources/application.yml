@@ -9,7 +9,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: false
 
   data:
@@ -43,8 +43,13 @@ spring:
 
 app:
   jwt:
-    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970337336763979244226452948404D635166546A576E5A7234753778214125442A47
+    # SECURITY: Never hardcode this. Set APP_JWT_SECRET env var in production (Kubernetes Secret / .env file).
+    # The fallback below is ONLY for local dev. Generate with: openssl rand -hex 64
+    secret: ${APP_JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970337336763979244226452948404D635166546A576E5A7234753778214125442A47}
     expiration-ms: 86400000
+  cors:
+    # Comma-separated list; override via APP_CORS_ALLOWED_ORIGINS env var in prod
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173}
 
 springdoc:
   api-docs:

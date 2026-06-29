@@ -26,6 +26,7 @@ public class PerformanceController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER')")
     public ResponseEntity<PerformanceDTO> getReviewById(@PathVariable Long id) {
         return ResponseEntity.ok(performanceService.getReviewById(id));
     }

@@ -21,6 +21,7 @@ public class PayrollDTO {
     private BigDecimal basicSalary;
     private BigDecimal allowances;
     private BigDecimal deductions;
+    private BigDecimal taxAmount;
     private BigDecimal netSalary;
     private LocalDate payDate;
     private String status;
@@ -34,6 +35,7 @@ public class PayrollDTO {
                 .basicSalary(payroll.getBasicSalary())
                 .allowances(payroll.getAllowances())
                 .deductions(payroll.getDeductions())
+                .taxAmount(payroll.getTaxAmount())
                 .netSalary(payroll.getNetSalary())
                 .payDate(payroll.getPayDate())
                 .status(payroll.getStatus().name())

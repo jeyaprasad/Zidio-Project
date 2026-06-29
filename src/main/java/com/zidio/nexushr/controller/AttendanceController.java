@@ -45,11 +45,13 @@ public class AttendanceController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER')")
     public ResponseEntity<AttendanceDTO> markAttendance(@RequestBody AttendanceDTO dto) {
         return ResponseEntity.ok(attendanceService.markAttendance(dto));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HR', 'MANAGER')")
     public ResponseEntity<AttendanceDTO> updateAttendance(@PathVariable Long id, @RequestBody AttendanceDTO dto) {
         return ResponseEntity.ok(attendanceService.updateAttendance(id, dto));
     }

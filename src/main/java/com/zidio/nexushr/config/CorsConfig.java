@@ -1,27 +1,21 @@
 package com.zidio.nexushr.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
-
-import java.util.List;
-
-@Configuration
+/**
+ * CORS configuration has been moved into {@link SecurityConfig#corsConfigurationSource()}.
+ *
+ * Registering a standalone CorsFilter bean alongside Spring Security's CORS support
+ * caused filter-chain conflicts where the Security filter (at higher precedence) would
+ * reject pre-flight OPTIONS requests before the CorsFilter could respond to them.
+ *
+ * The CorsConfigurationSource bean in SecurityConfig reads allowed origins from the
+ * {@code app.cors.allowed-origins} property, so you can configure origins per environment:
+ *
+ *   app:
+ *     cors:
+ *       allowed-origins:
+ *         - http://localhost:3000
+ *         - https://nexushr.yourdomain.com
+ */
 public class CorsConfig {
-
-    @Bean
-    public CorsFilter corsFilter() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173", "https://your-domain.com"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
-        config.setMaxAge(3600L);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
-    }
+    // Intentionally empty — see SecurityConfig
 }

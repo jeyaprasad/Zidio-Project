@@ -37,14 +37,14 @@ services:
       - db
       - redis
 
-  # 4. React 19 Frontend (Dev environment with Hot Reload)
+  # 4. React 19 / TanStack Start Frontend (Dev - SSR with Hot Reload)
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
     container_name: nexushr-frontend
     ports:
-      - "5173:5173"
+      - "3000:3000"
     volumes:
       - ./frontend:/app
       - /app/node_modules
