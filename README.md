@@ -17,10 +17,12 @@ docker compose up --build
 
 | Service     | URL                              | Description                  |
 | :---------- | :------------------------------- | :--------------------------- |
-| Frontend    | http://localhost:5173            | React + Vite Dev Server      |
+| Frontend    | http://localhost:3000            | React + Vite Dev Server      |
 | Backend API | http://localhost:8080/api        | Spring Boot REST API         |
 | PostgreSQL  | localhost:5432                   | Database (nexushr db)        |
 | Redis       | localhost:6379                   | Session Cache                |
+| Grafana     | http://localhost:3001            | Metrics Dashboard            |
+| Prometheus  | http://localhost:9090            | Metrics Scraper              |
 
 > **Default Admin Account** — Register at the app with role `ADMIN`, or use the `/api/auth/register` endpoint.
 
@@ -155,7 +157,9 @@ services:
   db:       PostgreSQL 17  (port 5432)
   redis:    Redis 7        (port 6379)
   backend:  Spring Boot    (port 8080)
-  frontend: Vite dev       (port 5173)
+  frontend: Vite dev       (port 3000)
+  grafana:  Grafana        (port 3001)
+  prom:     Prometheus     (port 9090)
 ```
 
 To restart with fresh data:

@@ -4,15 +4,14 @@
 -- Replaces Hibernate ddl-auto: update for production-safe schema management
 -- =============================================================================
 
--- ENUM types
-CREATE TYPE employment_status AS ENUM ('ACTIVE', 'ON_LEAVE', 'TERMINATED', 'SUSPENDED');
-CREATE TYPE user_role AS ENUM ('ADMIN', 'HR', 'MANAGER', 'EMPLOYEE');
-CREATE TYPE payroll_status AS ENUM ('PENDING', 'PROCESSED', 'PAID', 'CANCELLED');
-CREATE TYPE review_status AS ENUM ('DRAFT', 'SUBMITTED', 'ACKNOWLEDGED', 'COMPLETED');
-CREATE TYPE attendance_status AS ENUM ('PRESENT', 'ABSENT', 'LATE', 'HALF_DAY', 'ON_LEAVE');
-CREATE TYPE leave_status AS ENUM ('PENDING', 'APPROVED', 'REJECTED', 'CANCELLED');
-CREATE TYPE leave_type AS ENUM ('ANNUAL', 'SICK', 'MATERNITY', 'PATERNITY', 'UNPAID', 'OTHER');
-CREATE TYPE notification_type AS ENUM ('PAYROLL', 'LEAVE', 'PERFORMANCE', 'ATTENDANCE', 'GENERAL', 'AI_ALERT');
+-- ENUM types mapped as VARCHAR(50) to avoid Hibernate PSQLException
+-- 'ACTIVE', 'ON_LEAVE', 'TERMINATED', 'SUSPENDED'
+-- 'ADMIN', 'HR', 'MANAGER', 'EMPLOYEE'
+-- 'PENDING', 'PROCESSED', 'PAID', 'CANCELLED'
+-- 'DRAFT', 'SUBMITTED', 'ACKNOWLEDGED', 'COMPLETED'
+-- 'PRESENT', 'ABSENT', 'LATE', 'HALF_DAY', 'ON_LEAVE'
+-- 'PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'
+-- 'ANNUAL', 'SICK', 'MATERNITY', 'PATERNITY', 'UNPAID', 'OTHER'
 
 -- =============================================================================
 -- USERS
@@ -22,7 +21,7 @@ CREATE TABLE users (
     email        VARCHAR(255) NOT NULL UNIQUE,
     password     VARCHAR(255) NOT NULL,
     full_name    VARCHAR(255) NOT NULL,
-    role         user_role    NOT NULL DEFAULT 'EMPLOYEE',
+    role         VARCHAR(50)  NOT NULL DEFAULT 'EMPLOYEE',
     enabled      BOOLEAN      NOT NULL DEFAULT TRUE,
     created_at   TIMESTAMP    NOT NULL DEFAULT NOW(),
     updated_at   TIMESTAMP    NOT NULL DEFAULT NOW()
@@ -45,7 +44,7 @@ CREATE TABLE employees (
     hire_date     DATE           NOT NULL DEFAULT CURRENT_DATE,
     salary        NUMERIC(15, 2),
     leave_balance INTEGER        NOT NULL DEFAULT 30,
-    status        employment_status NOT NULL DEFAULT 'ACTIVE',
+    status        VARCHAR(50)    NOT NULL DEFAULT 'ACTIVE',
     user_id       BIGINT         REFERENCES users (id) ON DELETE SET NULL,
     created_at    TIMESTAMP      NOT NULL DEFAULT NOW(),
     updated_at    TIMESTAMP      NOT NULL DEFAULT NOW()
@@ -64,7 +63,7 @@ CREATE TABLE attendance (
     date        DATE      NOT NULL,
     check_in    TIME,
     check_out   TIME,
-    status      attendance_status NOT NULL DEFAULT 'ABSENT',
+    status      VARCHAR(50)       NOT NULL DEFAULT 'ABSENT',
     notes       TEXT,
     created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -81,12 +80,12 @@ CREATE INDEX idx_attendance_status        ON attendance (status);
 CREATE TABLE leaves (
     id            BIGSERIAL PRIMARY KEY,
     employee_id   BIGINT     NOT NULL REFERENCES employees (id) ON DELETE CASCADE,
-    leave_type    leave_type NOT NULL DEFAULT 'ANNUAL',
+    leave_type    VARCHAR(50) NOT NULL DEFAULT 'ANNUAL',
     start_date    DATE       NOT NULL,
     end_date      DATE       NOT NULL,
     days          INTEGER    NOT NULL DEFAULT 1,
     reason        TEXT,
-    status        leave_status NOT NULL DEFAULT 'PENDING',
+    status        VARCHAR(50)  NOT NULL DEFAULT 'PENDING',
     approved_by   BIGINT     REFERENCES employees (id) ON DELETE SET NULL,
     approved_at   TIMESTAMP,
     created_at    TIMESTAMP  NOT NULL DEFAULT NOW(),
@@ -110,7 +109,7 @@ CREATE TABLE payrolls (
     tax_amount   NUMERIC(15, 2)          DEFAULT 0,
     net_salary   NUMERIC(15, 2) NOT NULL DEFAULT 0,
     pay_date     DATE,
-    status       payroll_status NOT NULL DEFAULT 'PENDING',
+    status       VARCHAR(50)    NOT NULL DEFAULT 'PENDING',
     created_at   TIMESTAMP      NOT NULL DEFAULT NOW(),
     updated_at   TIMESTAMP      NOT NULL DEFAULT NOW()
 );
@@ -130,7 +129,7 @@ CREATE TABLE performance_reviews (
     rating      INTEGER CHECK (rating BETWEEN 1 AND 5),
     feedback    TEXT,
     goals       TEXT,
-    status      review_status NOT NULL DEFAULT 'DRAFT',
+    status      VARCHAR(50)   NOT NULL DEFAULT 'DRAFT',
     sentiment   VARCHAR(20),
     created_at  TIMESTAMP     NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMP     NOT NULL DEFAULT NOW()
@@ -145,14 +144,14 @@ CREATE INDEX idx_perf_status   ON performance_reviews (status);
 -- =============================================================================
 CREATE TABLE notifications (
     id          BIGSERIAL PRIMARY KEY,
-    employee_id BIGINT            NOT NULL REFERENCES employees (id) ON DELETE CASCADE,
+    user_id     BIGINT            NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     title       VARCHAR(255)      NOT NULL,
     message     TEXT              NOT NULL,
-    type        notification_type NOT NULL DEFAULT 'GENERAL',
-    is_read     BOOLEAN           NOT NULL DEFAULT FALSE,
+    type        VARCHAR(50)       NOT NULL DEFAULT 'INFO',
+    read        BOOLEAN           NOT NULL DEFAULT FALSE,
     created_at  TIMESTAMP         NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMP         NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_notifications_employee ON notifications (employee_id);
-CREATE INDEX idx_notifications_is_read  ON notifications (is_read);
+CREATE INDEX idx_notifications_user_id ON notifications (user_id);
+CREATE INDEX idx_notifications_read    ON notifications (read);
